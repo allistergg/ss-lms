@@ -1,0 +1,22 @@
+server:
+  port: 8082
+  undertow:
+    ioThreads: 15
+    workerThreads: 150
+    accesslog:
+      enabled: true
+  compression:
+    enabled: true
+    mimeTypes: application/json, text/xml
+    minResponseSize: 4096
+
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/library?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    initialize: true
+    
+  application:
+    name: BorrowerMS
