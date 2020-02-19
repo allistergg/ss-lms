@@ -1,7 +1,10 @@
 package com.ss.lms.orchestrator.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,26 +28,26 @@ public class AdminBranchController extends AdminController<Branch>{
 	}
 
 	@Override
-	public ResponseEntity<Branch> getById(Integer id) {
+	public ResponseEntity<Branch> getById(@PathVariable Integer id) {
 
 		return restTemplate.getForEntity(ADMIN_BRANCH_URI + id, Branch.class);
 	}
 
 	@Override
-	public ResponseEntity<Branch> create(@RequestBody Branch t) {
+	public ResponseEntity<Branch> create(@Valid @RequestBody Branch t) {
 		System.out.println(t);
 		return restTemplate.postForEntity(ADMIN_BRANCH_URI, t, Branch.class);
 	}
 
 	@Override
-	public void update(Branch t) {
+	public void update(@Valid @RequestBody Branch t) {
 		
 		restTemplate.put(ADMIN_BRANCH_URI + t.getBranchId(),  t);
 		
 	}
 
 	@Override
-	public void delete(Integer id) {
+	public void delete(@PathVariable Integer id) {
 		
 		restTemplate.delete(ADMIN_BRANCH_URI + id);
 		

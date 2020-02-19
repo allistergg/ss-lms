@@ -3,15 +3,18 @@ package com.ss.lms.librarian.entity;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 
 public class Branch {
 
 
 	private Integer branchId;
-
+	 @Size(min=1, max=45)
 	private String branchName;
-
-    private String branchAddress;
+	 @Size(min=1,max=45)
+	private String branchAddress;
     private List<Loan> loans;
     private List<Copy> copies;
 

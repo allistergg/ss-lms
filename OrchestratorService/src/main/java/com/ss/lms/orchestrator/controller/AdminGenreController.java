@@ -1,7 +1,11 @@
 package com.ss.lms.orchestrator.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -24,26 +28,26 @@ public class AdminGenreController extends AdminController<Genre>{
 	}
 
 	@Override
-	public ResponseEntity<Genre> getById(Integer id) {
+	public ResponseEntity<Genre> getById(@PathVariable Integer id) {
 		
 		return restTemplate.getForEntity(ADMIN_GENRE_URI + id, Genre.class);
 	}
 
 	@Override
-	public ResponseEntity<Genre> create(Genre t) {
+	public ResponseEntity<Genre> create(@Valid @RequestBody Genre t) {
 		
 		return restTemplate.postForEntity(ADMIN_GENRE_URI, t, Genre.class);
 	}
 
 	@Override
-	public void update(Genre t) {
+	public void update(@Valid @RequestBody Genre t) {
 		
 		restTemplate.put(ADMIN_GENRE_URI + t.getGenreId(), t);
 		
 	}
 
 	@Override
-	public void delete(Integer id) {
+	public void delete(@PathVariable Integer id) {
 		
 		restTemplate.delete(ADMIN_GENRE_URI + id);
 		

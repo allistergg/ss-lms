@@ -1,5 +1,7 @@
 package com.ss.lms.orchestrator.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +36,12 @@ public class AdminBookController extends AdminController<Book> {
 	}
 
 	@Override
-	public ResponseEntity<Book> create(@RequestBody Book t) {
+	public ResponseEntity<Book> create(@Valid @RequestBody Book t) {
 		return restTemplate.postForEntity(ADMIN_BOOK_URI, t, Book.class);
 	}
 
 	@Override
-	public void update(@RequestBody Book t) {
+	public void update(@Valid @RequestBody Book t) {
 		System.out.println("in orch update: " + t);
 		restTemplate.put(ADMIN_BOOK_URI + t.getBookId(), t);
 		

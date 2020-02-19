@@ -15,44 +15,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ss.lms.librarian.dao.BranchDAO;
 import com.ss.lms.librarian.entity.Branch;
+import com.ss.lms.librarian.service.LibrarianService;
 
 @RestController
 public class LibrarianController {
 
 	@Autowired
-	BranchDAO branchDAO;
+	LibrarianService service;
 
 	@GetMapping("/branch")
-	public List<Branch> getAllBranches() {
-		try {
-			return branchDAO.readAllBranchesFirstLevel();
-	} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
+	public List<Branch> getAllBranches() throws ClassNotFoundException, SQLException {
+		return service.findAllBranches();
 	
-	@GetMapping("/branchFull")
-	public List<Branch> getAllFullBranches() {
-
-		try {
-			return branchDAO.readAllBranches();
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	@PutMapping("/branch")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updateBranch(@RequestBody Branch branch) {
-		try {
-			branchDAO.updateBranch(branch);
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void updateBranch(@RequestBody Branch branch) throws ClassNotFoundException, SQLException {
+		service.updateBranch(branch);;
+		
 	}
 }

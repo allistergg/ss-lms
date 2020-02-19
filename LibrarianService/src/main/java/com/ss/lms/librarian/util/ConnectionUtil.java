@@ -6,15 +6,16 @@ import java.sql.SQLException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class ConnectionUtil {
     private String driver = "com.mysql.cj.jdbc.Driver";
     private String url = "jdbc:mysql://localhost:3306/library?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private String username = "root";
     private String password = "r00tR))T";
 
-    @Bean
+    
     public Connection getConnection() throws ClassNotFoundException, SQLException {
     	Class.forName(driver);
         Connection conn = DriverManager.getConnection(url, username, password);

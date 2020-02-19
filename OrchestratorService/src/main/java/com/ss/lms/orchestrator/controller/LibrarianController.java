@@ -1,5 +1,7 @@
 package com.ss.lms.orchestrator.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class LibrarianController {
 	
 	@PutMapping("/branch")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void updateBranch(@RequestBody Branch branch) {
+	public void updateBranch(@Valid @RequestBody Branch branch) {
 		restTemplate.put(BRANCH_URI, branch);
 	}
 

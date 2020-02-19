@@ -27,37 +27,33 @@ public class LoanDAO extends BaseDAO<Loan> {
     @Autowired
     BorrowerDAO bodao;
     
-    public LoanDAO(Connection conn) {
-        super(conn);
-    }
-
-    public void addLoan(Loan loan) throws SQLException, ClassNotFoundException {
+    public void addLoan(Loan loan, Connection conn) throws SQLException, ClassNotFoundException {
         save(ADD_LOAN_SQL, new Object[] {loan.getBook().getBookId(), loan.getBranch().getBranchId(), loan.getBorrower().getCardNo(),
-                                        loan.getDateOut(), loan.getDueDate(), loan.getDateIn()});
+                                        loan.getDateOut(), loan.getDueDate(), loan.getDateIn()}, conn);
     }
 
-    public void updateLoan(Loan loan) throws SQLException, ClassNotFoundException {
+    public void updateLoan(Loan loan, Connection conn) throws SQLException, ClassNotFoundException {
         save(UPDATE_LOAN_SQL, new Object[] {loan.getDateOut(), loan.getDueDate(), loan.getDateIn(),
-                                            loan.getBook().getBookId(), loan.getBranch().getBranchId(), loan.getBorrower().getCardNo()});
+                                            loan.getBook().getBookId(), loan.getBranch().getBranchId(), loan.getBorrower().getCardNo()}, conn);
     }
 
-    public void deleteLoan(Loan loan) throws SQLException, ClassNotFoundException {
-        save(DELETE_LOAN_SQL, new Object[] {loan.getBook().getBookId(), loan.getBranch().getBranchId(), loan.getBorrower().getCardNo()});
+    public void deleteLoan(Loan loan, Connection conn) throws SQLException, ClassNotFoundException {
+        save(DELETE_LOAN_SQL, new Object[] {loan.getBook().getBookId(), loan.getBranch().getBranchId(), loan.getBorrower().getCardNo()}, conn);
     }
 
-    public List<Loan> readAllLoans() throws SQLException, ClassNotFoundException {
-        return read(READ_LOAN_SQL, null);
+    public List<Loan> readAllLoans(Connection conn) throws SQLException, ClassNotFoundException {
+        return read(READ_LOAN_SQL, null, conn);
     }
 
     @Override
-    List<Loan> extractData(ResultSet rs) throws SQLException, ClassNotFoundException {
+    List<Loan> extractData(ResultSet rs, Connection conn) throws SQLException, ClassNotFoundException {
       
         List<Loan> loans = new ArrayList<>();
         while(rs.next()) {
             Loan l = new Loan();
-            l.setBook(bdao.getBookById(rs.getInt("bookId")));
-            l.setBranch(brdao.getBranchById(rs.getInt("branchId")));
-            l.setBorrower(bodao.getBorrowerByCardNo(rs.getInt("cardNo")));
+            l.setBook(bdao.getBookById(rs.getInt("bookId"), conn));
+            l.setBranch(brdao.getBranchById(rs.getInt("branchId"), conn));
+            l.setBorrower(bodao.getBorrowerByCardNo(rs.getInt("cardNo"), conn));
             l.setDateOut(rs.getDate("dateOut").toLocalDate());
             l.setDueDate(rs.getDate("dueDate").toLocalDate());
             if (rs.getDate("dateIn") != null) {
@@ -69,7 +65,7 @@ public class LoanDAO extends BaseDAO<Loan> {
     }
 
     @Override
-    List<Loan> extractDataFirstLevel(ResultSet rs) throws SQLException, ClassNotFoundException {
+    List<Loan> extractDataFirstLevel(ResultSet rs, Connection conn) throws SQLException, ClassNotFoundException {
         return null;
     }
 }

@@ -1,7 +1,11 @@
 package com.ss.lms.orchestrator.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -24,25 +28,25 @@ public class AdminPublisherController extends AdminController<Publisher> {
 	}
 
 	@Override
-	public ResponseEntity<Publisher> getById(Integer id) {
+	public ResponseEntity<Publisher> getById(@PathVariable Integer id) {
 		
 		return restTemplate.getForEntity(ADMIN_PUBLISHER_URI + id, Publisher.class);
 	}
 
 	@Override
-	public ResponseEntity<Publisher> create(Publisher t) {
+	public ResponseEntity<Publisher> create(@Valid @RequestBody Publisher t) {
 		// TODO Auto-generated method stub
 		return restTemplate.postForEntity(ADMIN_PUBLISHER_URI,  t,  Publisher.class);
 	}
 
 	@Override
-	public void update(Publisher t) {
+	public void update(@Valid @RequestBody Publisher t) {
 		restTemplate.put(ADMIN_PUBLISHER_URI + t.getPublisherId(), t);
 		
 	}
 
 	@Override
-	public void delete(Integer id) {
+	public void delete(@PathVariable Integer id) {
 		restTemplate.delete(ADMIN_PUBLISHER_URI + id);
 		
 	}
