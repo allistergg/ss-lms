@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,13 +25,13 @@ public class LibrarianController {
 	
 	private String BRANCH_URI = "http://localhost:8085/branch";
 	
-	@GetMapping("/branches")
+	@GetMapping(path="/branches", produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Branch[]> getBranches() {
 		return restTemplate.getForEntity(BRANCH_URI, Branch[].class);
 	}
 	
-	@PutMapping("/branch")
+	@PutMapping(path="/branch", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateBranch(@Valid @RequestBody Branch branch) {
 		restTemplate.put(BRANCH_URI, branch);

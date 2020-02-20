@@ -1,10 +1,21 @@
 package com.ss.lms.orchestrator.controller;
 
+
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,26 +29,24 @@ public class BorrowerController {
 	@Autowired
 	RestTemplate restTemplate;
 	
-	String BORROWER_URI = "http://localhost:8082/rest/member";
+	String BORROWER_URI = "http://localhost:8082/loans";
 	
-	@PostMapping("/checkout")
-	public ResponseEntity<CheckoutDetails> checkoutBook(@RequestBody Loan l) {
+	@PostMapping(path="/loans", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+			produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+
+	public ResponseEntity<CheckoutDetails> checkoutBook(@Valid @RequestBody Loan l) {
 		
-		String builtUri = BORROWER_URI + "/checkout?" +
-				"bookId=" + l.getBook().getBookId() + "&" +
-				"branchId=" + l.getBranch().getBranchId() + "&" +
-				"cardNo=" + l.getBorrower().getCardNo();
+		String builtUri = BORROWER_URI + "/new" + "/" + l.getBranch().getBranchId() + 
+				"/" +l.getBook().getBookId() + 
+				"/" + l.getBorrower().getCardNo();
 
 		return restTemplate.postForEntity(builtUri, l,CheckoutDetails.class);
 	}
 	
-	@PostMapping("/return")
-	public ResponseEntity<String> returnBook(@RequestBody Loan l) {
+	@PostMapping(path="/loans", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	public ResponseEntity<String> returnBook(@Valid @RequestBody Loan l) {
 	
-		String builtUri = BORROWER_URI + "/checkin?" +
-				"bookId=" + l.getBook().getBookId() + "&" +
-				"cardNo=" + l.getBorrower().getCardNo();
-
-		return restTemplate.postForEntity(builtUri, l, String.class);
+		String builtUri = BORROWER_URI + "/" + "return/"+ l.getBook().getBookId() + "/" + l.getBorrower().getCardNo();
+		return restTemplate.postForEntity(builtUri,l,String.class);
 	}
 }
