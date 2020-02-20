@@ -1,5 +1,6 @@
 package com.smoothstack.lms.administrator.dao;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,16 +18,16 @@ public class CopiesDAO extends BaseDAO<Copies>{
 	private BranchDAO brdao;
 
 	@Override
-	List<Copies> extractData(ResultSet rs) throws SQLException, ClassNotFoundException {
+	List<Copies> extractData(Connection conn, ResultSet rs) throws SQLException {
 		return null;
 	}
 
 	@Override
-	List<Copies> extractDataFirstLevel(ResultSet rs) throws SQLException, ClassNotFoundException {
+	List<Copies> extractDataFirstLevel(Connection conn, ResultSet rs) throws SQLException {
 		List<Copies> copies = new ArrayList<>();
 		while(rs.next()){
 			Copies c = new Copies();
-			c.setBranch(brdao.readFirstLevel("select * from tbl_library_branch where branchId = ?", new Object[] { rs.getInt("branchId") }).get(0));
+			c.setBranch(brdao.readFirstLevel(conn, "select * from tbl_library_branch where branchId = ?", new Object[] { rs.getInt("branchId") }).get(0));
 			c.setNoOfCopies(rs.getInt("noOfCopies"));
 			copies.add(c);
 		}

@@ -5,75 +5,68 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.smoothstack.lms.administrator.dao.AuthorDAO;
 import com.smoothstack.lms.administrator.model.Author;
 
-@Component
+@Service
 public class AuthorService {
 	
 	@Autowired
-	private Connection conn;
+	private ConnectionUtil connUtil;
 	@Autowired
 	private AuthorDAO adao;
 	
 	// CREATE AUTHOR
 	public Integer saveAuthor(Author author) throws SQLException {
-		try {
-			Integer authorId = adao.addAuthorReturnPK(author);
+		try (Connection conn = connUtil.getConnection()) {
+			Integer authorId = adao.addAuthorReturnPK(conn, author);
 			conn.commit();
-			return authorId;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with add author.");
-			conn.rollback();
-		}
-		return null;
+			return authorId;		
+		} catch (ClassNotFoundException e) {
+			return null;
+		} 
+	}
+	
+	// READ AUTHOR BY ID
+	public List<Author> getAuthorById(Integer authorId) throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			return adao.readAuthorById(conn, authorId);
+		} catch (ClassNotFoundException e) {
+			return null;
+		} 
 	}
 		
 	// READ AUTHORS
-	public List<Author> readAuthors() throws SQLException{
-		try {
-			return adao.readAuthors();
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with read authors.");
+	public List<Author> readAuthors() throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			return adao.readAuthors(conn);
+		}	catch (ClassNotFoundException e) {
+			return null;
 		}
-		return null;
 	}
 	
 	// UPDATE AUTHOR
-	public Boolean updateAuthor(Author author) throws SQLException{
-		try {
-			Boolean exists = adao.updateAuthor(author);
+	public Boolean updateAuthor(Author author) throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			Boolean exists = adao.updateAuthor(conn, author);
 			conn.commit();
 			return exists;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with update author.");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
 	}
 	
 	// DELETE AUTHOR
-	public Boolean deleteAuthor(Integer authorId) throws SQLException{
-		try {
-			Boolean exists = adao.deleteAuthor(authorId);
+	public Boolean deleteAuthor(Integer authorId) throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			Boolean exists = adao.deleteAuthor(conn, authorId);
 			conn.commit();
 			return exists;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with delete author.");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
-	}
-
-	public Author getAuthorById(int authorId) throws SQLException {
-		try {
-			return adao.readAuthorById(authorId);
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with read author by id.");
-		} 
-		return null;
 	}
 
 }

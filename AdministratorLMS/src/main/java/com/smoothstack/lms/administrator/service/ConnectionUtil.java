@@ -4,20 +4,18 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class ConnectionUtil {
 	
 	// change to environment variables
 	private static String driver = "com.mysql.cj.jdbc.Driver";
-	private static String url = "jdbc:mysql://localhost:3306/library?useSSL=false&allowPublicKeyRetrieval=true";
+	private static String url = "jdbc:mysql://localhost:3307/library?useSSL=false&allowPublicKeyRetrieval=true";
 	private static String username = "root";
-	private static String password = "r00tR))T";
+	private static String password = "";
 	
-	@Bean
-	protected Connection getConnection() throws ClassNotFoundException, SQLException {
+	public Connection getConnection() throws SQLException, ClassNotFoundException {
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(url, username, password);
 		conn.setAutoCommit(Boolean.FALSE);
