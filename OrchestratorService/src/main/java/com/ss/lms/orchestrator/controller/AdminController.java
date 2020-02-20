@@ -27,13 +27,14 @@ public abstract class AdminController<T> {
 	@GetMapping(path="{id}", produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.OK)
 	public abstract ResponseEntity<T> getById(@PathVariable Integer id);
-	@PostMapping(produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@PostMapping(produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+			consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.CREATED)
 	public abstract ResponseEntity<T> create(@RequestBody T t);
-	@PutMapping(produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@PutMapping(consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public abstract void update(@RequestBody T t);
-	@DeleteMapping(path="{id}", produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@DeleteMapping(path="{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public abstract void delete(@PathVariable Integer id);
 	

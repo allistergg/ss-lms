@@ -32,7 +32,7 @@ public class LibrarianController {
 	
 	}
 
-	@PutMapping(path="/branch", produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@PutMapping(path="/branch", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateBranch(@Valid @RequestBody Branch branch) throws ClassNotFoundException, SQLException {
 		service.updateBranch(branch);;

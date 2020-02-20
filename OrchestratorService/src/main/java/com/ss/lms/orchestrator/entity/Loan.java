@@ -3,10 +3,14 @@ package com.ss.lms.orchestrator.entity;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
 public class Loan {
 
-    private Book book;
+    @NotNull(message="A book must be provided")
+	private Book book;
     private Branch branch;
+    @NotNull(message="A borrower must be provided")
     private Borrower borrower;
     private LocalDate dateIn;
     private LocalDate dateOut;
