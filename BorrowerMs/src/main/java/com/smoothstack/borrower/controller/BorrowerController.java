@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smoothstack.borrower.domain.CheckOutDetails;
+import com.smoothstack.borrower.exceptions.InvalidBookIdException;
+import com.smoothstack.borrower.exceptions.InvalidBranchIdException;
 import com.smoothstack.borrower.exceptions.InvalidCardNumberException;
 import com.smoothstack.borrower.services.BorrowerServices;
 import com.smoothstack.borrower.util.HeaderUtils;
@@ -37,7 +39,7 @@ public class BorrowerController {
 			CheckOutDetails details = borrowerService.checkOutBook(branchId, bookId, cardNo);
 			return new ResponseEntity<>(details, null, HttpStatus.OK);
 
-		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException e) {
+		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException | InvalidBranchIdException | InvalidBookIdException e) {
 
 			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
 
@@ -67,7 +69,7 @@ public class BorrowerController {
 
 			}
 
-		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException e) {
+		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException | InvalidBookIdException e) {
 
 			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
 			return new ResponseEntity<>("Check In book failed" + e.getMessage(), HttpStatus.BAD_REQUEST);

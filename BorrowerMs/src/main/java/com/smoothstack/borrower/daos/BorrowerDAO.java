@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.smoothstack.borrower.exceptions.InvalidBookIdException;
+import com.smoothstack.borrower.exceptions.InvalidBranchIdException;
 import com.smoothstack.borrower.exceptions.InvalidCardNumberException;
 import com.smoothstack.borrower.services.ConnectionUtil;
 
@@ -19,7 +21,7 @@ public class BorrowerDAO {
 	private static final Logger log = LoggerFactory.getLogger(BorrowerDAO.class);
 
 	public boolean checkOut(Integer branchId, Integer bookId, Integer cardNo)
-			throws SQLException, ClassNotFoundException, InvalidCardNumberException {
+			throws SQLException, ClassNotFoundException, InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
 		Date dateOut = new java.sql.Timestamp(new Date().getTime());
 
@@ -45,7 +47,7 @@ public class BorrowerDAO {
 	}
 
 	public boolean returnBook(Integer bookId, Integer cardNo)
-			throws ClassNotFoundException, SQLException, InvalidCardNumberException {
+			throws ClassNotFoundException, SQLException, InvalidCardNumberException, InvalidBookIdException {
 
 		Date dateIn = new java.sql.Timestamp(new Date().getTime());
 		if (!isCardNumberValid(cardNo)) {

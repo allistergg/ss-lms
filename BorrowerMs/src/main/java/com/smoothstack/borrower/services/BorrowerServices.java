@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.smoothstack.borrower.daos.BorrowerDAO;
 import com.smoothstack.borrower.domain.CheckOutDetails;
+import com.smoothstack.borrower.exceptions.InvalidBookIdException;
+import com.smoothstack.borrower.exceptions.InvalidBranchIdException;
 import com.smoothstack.borrower.exceptions.InvalidCardNumberException;
 
 @Service
@@ -26,7 +28,7 @@ public class BorrowerServices implements IBorrowerServices {
 
 	@Override
 	public CheckOutDetails checkOutBook(Integer branchId, Integer bookId, Integer cardNo)
-			throws SQLException, ClassNotFoundException, InvalidCardNumberException {
+			throws SQLException, ClassNotFoundException, InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 		CheckOutDetails details = null;
 		Connection conn = null;
 		try {
@@ -42,7 +44,7 @@ public class BorrowerServices implements IBorrowerServices {
 			details = new CheckOutDetails(bookTitle, dueDate.toString());
 			
 			
-		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException  e) {
+		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException | InvalidBranchIdException | InvalidBookIdException e) {
 			if(conn != null) {
 		//	conn.rollback();
 			}
@@ -53,7 +55,7 @@ public class BorrowerServices implements IBorrowerServices {
 	}
 
 	@Override
-	public boolean checkInBook(Integer bookId, Integer cardNo) throws ClassNotFoundException, SQLException, InvalidCardNumberException {
+	public boolean checkInBook(Integer bookId, Integer cardNo) throws ClassNotFoundException, SQLException, InvalidCardNumberException, InvalidBookIdException {
 		Connection conn = null;
 		try {
 			conn = ConnectionUtil.getConnection();
@@ -61,7 +63,7 @@ public class BorrowerServices implements IBorrowerServices {
 		//	conn.commit();
 			return status;
 
-		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException  e) {
+		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException | InvalidBookIdException e) {
 			if(conn != null) {
 		//	conn.rollback();
 			}
