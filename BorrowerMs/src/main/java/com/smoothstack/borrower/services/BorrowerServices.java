@@ -1,74 +1,75 @@
 package com.smoothstack.borrower.services;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smoothstack.borrower.daos.BorrowerDAO;
 import com.smoothstack.borrower.domain.CheckOutDetails;
+import com.smoothstack.borrower.exceptions.InvalidCardNumberException;
 
 @Service
+@Transactional
 public class BorrowerServices implements IBorrowerServices {
 
+	private static final Logger log = LoggerFactory.getLogger(BorrowerServices.class);
+
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private BorrowerDAO bdao;
 
 	@Override
-	public String checkOutBook(int branchId, int bookId, int cardNo) throws Exception {
-		String status = "";
+	public CheckOutDetails checkOutBook(Integer branchId, Integer bookId, Integer cardNo)
+			throws SQLException, ClassNotFoundException, InvalidCardNumberException {
+		CheckOutDetails details = null;
+		Connection conn = null;
 		try {
-
-			Date dateOut = new java.sql.Timestamp(new Date().getTime());
-
+			conn = ConnectionUtil.getConnection();
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DATE, +7);
 			Date dueDate = cal.getTime();
-			Date dueDateTimeStamp = new java.sql.Timestamp(dueDate.getTime());
-
-			String sql = "SET FOREIGN_KEY_CHECKS=0";
-
-			jdbcTemplate.execute(sql);
-
-			sql = "INSERT INTO tbl_book_loans(bookId, branchId, cardNo, dateOut, dueDate) VALUES('" + bookId + "', '"
-					+ branchId + "', '" + cardNo + "', '" + dateOut + "', '" + dueDateTimeStamp + "')";
-			jdbcTemplate.execute(sql);
-
-			sql = "SET FOREIGN_KEY_CHECKS=1";
-			jdbcTemplate.execute(sql);
-
+			boolean status = bdao.checkOut(branchId, bookId, cardNo);
 			
-			sql = "SELECT title from tbl_book where bookId = ?";
+		//	conn.commit();
 			
-			String bookTitle = (String) jdbcTemplate.queryForObject(sql, new Object[] { bookId }, String.class);
-
-			ObjectMapper mapper = new ObjectMapper();
-			CheckOutDetails details = new CheckOutDetails(bookTitle, dueDate.toString());
-			status = mapper.writeValueAsString(details);
-		} catch (Exception e) {
+			String bookTitle = bdao.getBookTitle(bookId);
+			details = new CheckOutDetails(bookTitle, dueDate.toString());
+			
+			
+		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException  e) {
+			if(conn != null) {
+		//	conn.rollback();
+			}
+			log.error("Please try again, as there was a database error. Unable to make changes.");
 			throw e;
 		}
-		return status;
-
+		return details;
 	}
 
 	@Override
-	public boolean checkInBook(int bookId, int cardNo) throws Exception {
-
+	public boolean checkInBook(Integer bookId, Integer cardNo) throws ClassNotFoundException, SQLException, InvalidCardNumberException {
+		Connection conn = null;
 		try {
-			Date dateIn = new java.sql.Timestamp(new Date().getTime());
+			conn = ConnectionUtil.getConnection();
+			boolean status = bdao.returnBook(bookId, cardNo);
+		//	conn.commit();
+			return status;
 
-			String sql = "UPDATE tbl_book_loans SET dateIn ='" + dateIn + "' where cardNo = '" + cardNo
-					+ "' and bookId = '" + bookId + "'";
-			int rows = jdbcTemplate.update(sql);
-			return rows > 0;
-
-		} catch (Exception e) {
+		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException  e) {
+			if(conn != null) {
+		//	conn.rollback();
+			}
+		
+			log.error("Please try again, as there was a database error. Unable to make changes.");
 			throw e;
 		}
-
+		
 	}
 
 }
