@@ -55,7 +55,7 @@ public class BookDAO extends BaseDAO<Book>{
         try {
             return (Book) readFirstLevel(GET_BOOK_BY_ID_SQL, new Object[]{id}, conn).get(0);
         } catch (IllegalArgumentException e) {
-            System.out.println("book not found");
+          
             return null;
         }
     }
@@ -64,7 +64,7 @@ public class BookDAO extends BaseDAO<Book>{
         try {
             return (Book) read(GET_BOOK_BY_ID_SQL, new Object[] {id}, conn).get(0);
         } catch (IllegalArgumentException e) {
-            System.out.println("book not found");
+            
             return null;
         }
     }

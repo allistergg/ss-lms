@@ -35,7 +35,7 @@ public class AdminPublisherController extends AdminController<Publisher> {
 
 	@Override
 	public ResponseEntity<Publisher> create(@Valid @RequestBody Publisher t) {
-		// TODO Auto-generated method stub
+	
 		return restTemplate.postForEntity(ADMIN_PUBLISHER_URI,  t,  Publisher.class);
 	}
 

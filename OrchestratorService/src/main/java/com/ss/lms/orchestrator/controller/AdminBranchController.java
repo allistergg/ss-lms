@@ -35,7 +35,7 @@ public class AdminBranchController extends AdminController<Branch>{
 
 	@Override
 	public ResponseEntity<Branch> create(@Valid @RequestBody Branch t) {
-		System.out.println(t);
+	
 		return restTemplate.postForEntity(ADMIN_BRANCH_URI, t, Branch.class);
 	}
 

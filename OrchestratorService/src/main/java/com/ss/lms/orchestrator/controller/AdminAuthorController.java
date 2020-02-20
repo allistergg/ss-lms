@@ -37,7 +37,7 @@ public class AdminAuthorController extends AdminController<Author> {
 
 	@Override
 	public void update(@Valid @RequestBody Author t) {
-		// TODO Auto-generated method stub
+	
 		restTemplate.put(ADMIN_AUTHOR_URI + t.getAuthorId(), t);
 		
 	}

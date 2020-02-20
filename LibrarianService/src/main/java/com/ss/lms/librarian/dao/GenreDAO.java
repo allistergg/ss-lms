@@ -49,12 +49,12 @@ public class GenreDAO extends BaseDAO<Genre> {
     }
 
     public void deleteBookGenres(Integer bookId,Connection conn) throws SQLException, ClassNotFoundException {
-        System.out.println("bookId in deleteBookGenres" + bookId);
+     
         save(DELETE_BOOK_GENRES_SQL, new Object[] {bookId}, conn);
     }
 
     public void insertBookGenres(Genre genre, Book book, Connection conn) throws ClassNotFoundException, SQLException{
-        System.out.println("GenreId and BookId in InsertBookGenres: " + genre.getGenreId() + ", "  + book.getBookId());
+        
         save(INSERT_BOOK_GENRES_SQL, new Object[] {genre.getGenreId(), book.getBookId()}, conn);
     }
 

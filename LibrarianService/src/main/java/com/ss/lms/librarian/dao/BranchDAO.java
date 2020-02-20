@@ -52,7 +52,7 @@ public class BranchDAO extends BaseDAO<Branch> {
         try {
         return (Branch) readFirstLevel(GET_BRANCH_BY_ID_SQL, new Object[] {id}, conn).get(0);
     } catch (IndexOutOfBoundsException e) {
-        System.out.println("Branch not found");
+   
         return null;
     }
     }
@@ -60,7 +60,7 @@ public class BranchDAO extends BaseDAO<Branch> {
         try{
             return (Branch) read(GET_BRANCH_BY_ID_SQL, new Object[] {id}, conn).get(0);
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("Branch not found");
+        
             return null;
         }
     }
