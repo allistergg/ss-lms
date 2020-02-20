@@ -27,8 +27,8 @@ public class BorrowerServices implements IBorrowerServices {
 	private BorrowerDAO bdao;
 
 	@Override
-	public CheckOutDetails checkOutBook(Integer branchId, Integer bookId, Integer cardNo)
-			throws SQLException, ClassNotFoundException, InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	public CheckOutDetails checkOutBook(Integer branchId, Integer bookId, Integer cardNo) throws SQLException,
+			ClassNotFoundException, InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 		CheckOutDetails details = null;
 		Connection conn = null;
 		try {
@@ -37,41 +37,65 @@ public class BorrowerServices implements IBorrowerServices {
 			cal.add(Calendar.DATE, +7);
 			Date dueDate = cal.getTime();
 			boolean status = bdao.checkOut(branchId, bookId, cardNo);
-			
-		//	conn.commit();
-			
+
+			// conn.commit();
+
 			String bookTitle = bdao.getBookTitle(bookId);
 			details = new CheckOutDetails(bookTitle, dueDate.toString());
-			
-			
-		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException | InvalidBranchIdException | InvalidBookIdException e) {
-			if(conn != null) {
-		//	conn.rollback();
+
+		} catch (ClassNotFoundException | SQLException e) {
+			if (conn != null) {
+				// conn.rollback();
 			}
-			log.error("Please try again, as there was a database error. Unable to make changes.");
+			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
+
 			throw e;
+
+		} catch (InvalidCardNumberException | InvalidBranchIdException | InvalidBookIdException e1) {
+
+			if (conn != null) {
+				// conn.rollback();
+			}
+			log.error("Please try again, as there was invalid data. Unable to make changes, as a result."
+					+ e1.getMessage());
+			throw e1;
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
 		}
 		return details;
+
 	}
 
 	@Override
-	public boolean checkInBook(Integer bookId, Integer cardNo) throws ClassNotFoundException, SQLException, InvalidCardNumberException, InvalidBookIdException {
+	public boolean checkInBook(Integer bookId, Integer cardNo)
+			throws ClassNotFoundException, SQLException, InvalidCardNumberException, InvalidBookIdException {
 		Connection conn = null;
 		try {
 			conn = ConnectionUtil.getConnection();
 			boolean status = bdao.returnBook(bookId, cardNo);
-		//	conn.commit();
+			// conn.commit();
 			return status;
 
-		} catch (ClassNotFoundException | SQLException | InvalidCardNumberException | InvalidBookIdException e) {
-			if(conn != null) {
-		//	conn.rollback();
+		} catch (ClassNotFoundException | SQLException e) {
+			if (conn != null) {
+				// conn.rollback();
 			}
-		
-			log.error("Please try again, as there was a database error. Unable to make changes.");
+			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
 			throw e;
-		}
-		
-	}
+		} catch (InvalidCardNumberException | InvalidBookIdException e1) {
+			if (conn != null) {
+				// conn.rollback();
+			}
+			log.error("Please try again, as there was invalid data. Unable to make changes, as a result."
+					+ e1.getMessage());
+			throw e1;
 
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
 }

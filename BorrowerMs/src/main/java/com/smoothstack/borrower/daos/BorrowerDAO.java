@@ -41,9 +41,10 @@ public class BorrowerDAO {
 		statement.execute();
 
 		setForeignKeyChecks(1);
-
+		
+		connection.close();
 		return true;
-
+		
 	}
 
 	public boolean returnBook(Integer bookId, Integer cardNo)
@@ -60,6 +61,7 @@ public class BorrowerDAO {
 		PreparedStatement statement = connection.prepareStatement(sql);
 
 		statement.execute();
+		connection.close();
 		return true;
 
 	}
@@ -68,8 +70,9 @@ public class BorrowerDAO {
 		Connection connection = ConnectionUtil.getConnection();
 		String sql = "SET FOREIGN_KEY_CHECKS= " + val;
 		PreparedStatement statement = connection.prepareStatement(sql);
-
+		
 		statement.execute();
+		connection.close();
 	}
 
 	public String getBookTitle(Integer bookId) throws ClassNotFoundException, SQLException {
@@ -85,7 +88,8 @@ public class BorrowerDAO {
 			title = rs.getString("title");
 
 		}
-
+		
+		connection.close();
 		return title;
 	}
 
@@ -97,6 +101,7 @@ public class BorrowerDAO {
 
 		statement = connection.prepareStatement(sql);
 		ResultSet rs = statement.executeQuery();
+		connection.close();
 		return rs.next() == false;
 
 	}
