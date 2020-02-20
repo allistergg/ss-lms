@@ -19,7 +19,7 @@ public class LibrarianService {
 	public ConnectionUtil connUtil;
 	
 	@Autowired
-	BranchDAO brdao;
+	private BranchDAO brdao;
 	
 	
 	public List<Branch> findAllBranches() throws SQLException {
