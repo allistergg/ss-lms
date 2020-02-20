@@ -1,5 +1,7 @@
 package com.ss.lms.orchestrator.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,13 +31,13 @@ public class AdminAuthorController extends AdminController<Author> {
 	}
 
 	@Override
-	public ResponseEntity<Author> create(@RequestBody Author t) {
+	public ResponseEntity<Author> create(@Valid @RequestBody Author t) {
 		return restTemplate.postForEntity(ADMIN_AUTHOR_URI, t, Author.class);
 	}
 
 	@Override
-	public void update(@RequestBody Author t) {
-		// TODO Auto-generated method stub
+	public void update(@Valid @RequestBody Author t) {
+	
 		restTemplate.put(ADMIN_AUTHOR_URI + t.getAuthorId(), t);
 		
 	}

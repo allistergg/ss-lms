@@ -2,6 +2,7 @@ package com.ss.lms.orchestrator.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,19 +21,19 @@ public abstract class AdminController<T> {
 	RestTemplate restTemplate;
 	
 	
-	@GetMapping
+	@GetMapping(produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.OK)
 	public abstract ResponseEntity<T[]> getAll();
-	@GetMapping("{id}")
+	@GetMapping(path="{id}", produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.OK)
 	public abstract ResponseEntity<T> getById(@PathVariable Integer id);
-	@PostMapping
+	@PostMapping(produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.CREATED)
 	public abstract ResponseEntity<T> create(@RequestBody T t);
-	@PutMapping
+	@PutMapping(produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public abstract void update(@RequestBody T t);
-	@DeleteMapping("{id}")
+	@DeleteMapping(path="{id}", produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public abstract void delete(@PathVariable Integer id);
 	

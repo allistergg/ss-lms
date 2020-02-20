@@ -20,32 +20,28 @@ public class PublisherDAO extends BaseDAO<Publisher> {
     private String READ_PUBLISHERS_SQL =  "SELECT * FROM tbl_publisher";
     private String GET_PUBLISHER_BY_ID_SQL = "SELECT * FROM tbl_publisher WHERE publisherId = ?";
 
-    public PublisherDAO(Connection conn) {
-        super(conn);
+  public Integer addPublisher(Publisher publisher, Connection conn) throws SQLException, ClassNotFoundException {
+        return save(ADD_PUBLISHER_SQL, new Object[] {publisher.getPublisherName(), publisher.getPublisherAddress(), publisher.getPublisherPhone()}, conn);
     }
 
-    public Integer addPublisher(Publisher publisher) throws SQLException, ClassNotFoundException {
-        return save(ADD_PUBLISHER_SQL, new Object[] {publisher.getPublisherName(), publisher.getPublisherAddress(), publisher.getPublisherPhone()});
+    public void updatePublisher(Publisher publisher, Connection conn) throws SQLException, ClassNotFoundException {
+        save(UPDATE_PUBLISHER_SQL, new Object[] {publisher.getPublisherName(), publisher.getPublisherAddress(), publisher.getPublisherPhone(), publisher.getPublisherId()}, conn);
     }
 
-    public void updatePublisher(Publisher publisher) throws SQLException, ClassNotFoundException {
-        save(UPDATE_PUBLISHER_SQL, new Object[] {publisher.getPublisherName(), publisher.getPublisherAddress(), publisher.getPublisherPhone(), publisher.getPublisherId()});
+    public void deletePublisher(Publisher publisher, Connection conn) throws SQLException, ClassNotFoundException {
+        save(DELETE_PUBLISHER_SQL, new Object[] {publisher.getPublisherId()}, conn);
     }
 
-    public void deletePublisher(Publisher publisher) throws SQLException, ClassNotFoundException {
-        save(DELETE_PUBLISHER_SQL, new Object[] {publisher.getPublisherId()});
+    public List<Publisher> readAllPublishers(Connection conn) throws SQLException, ClassNotFoundException {
+        return read(READ_PUBLISHERS_SQL, null, conn);
     }
 
-    public List<Publisher> readAllPublishers() throws SQLException, ClassNotFoundException {
-        return read(READ_PUBLISHERS_SQL, null);
-    }
-
-    public Publisher getPublisherById(Integer id) throws SQLException, ClassNotFoundException {
-        return (Publisher) read(GET_PUBLISHER_BY_ID_SQL, new Object[] {id}).get(0);
+    public Publisher getPublisherById(Integer id, Connection conn) throws SQLException, ClassNotFoundException {
+        return (Publisher) read(GET_PUBLISHER_BY_ID_SQL, new Object[] {id}, conn).get(0);
     }
 
     @Override
-    List<Publisher> extractData(ResultSet rs) throws SQLException {
+    List<Publisher> extractData(ResultSet rs, Connection conn) throws SQLException {
         List<Publisher> publishers = new ArrayList<>();
         while (rs.next()) {
             Publisher p = new Publisher();
@@ -59,7 +55,7 @@ public class PublisherDAO extends BaseDAO<Publisher> {
     }
 
     @Override
-    List<Publisher> extractDataFirstLevel(ResultSet rs) throws SQLException, ClassNotFoundException {
+    List<Publisher> extractDataFirstLevel(ResultSet rs, Connection conn) throws SQLException, ClassNotFoundException {
         return null;
     }
 }

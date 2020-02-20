@@ -1,7 +1,10 @@
 package com.ss.lms.orchestrator.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,13 +37,13 @@ public class AdminBookController extends AdminController<Book> {
 	}
 
 	@Override
-	public ResponseEntity<Book> create(@RequestBody Book t) {
+	public ResponseEntity<Book> create(@Valid @RequestBody Book t) {
 		return restTemplate.postForEntity(ADMIN_BOOK_URI, t, Book.class);
 	}
 
 	@Override
-	public void update(@RequestBody Book t) {
-		System.out.println("in orch update: " + t);
+	public void update(@Valid @RequestBody Book t) {
+
 		restTemplate.put(ADMIN_BOOK_URI + t.getBookId(), t);
 		
 	}
@@ -52,13 +55,13 @@ public class AdminBookController extends AdminController<Book> {
 		
 	}
 	
-	@PutMapping("/{bookId}/authors")
+	@PutMapping(path="/{bookId}/authors", produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateBookAuthors(Book book) {
 		restTemplate.put(ADMIN_BOOK_URI + book.getBookId() + "/authors", book);
 	}
 	
-	@PutMapping("/{bookId}/genres")
+	@PutMapping(path="/{bookId}/genres", produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateBookGenres(Book book) {
 		restTemplate.put(ADMIN_BOOK_URI + book.getBookId() + "/authors", book);

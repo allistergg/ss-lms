@@ -3,9 +3,12 @@ package com.ss.lms.orchestrator.entity;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.Size;
+
 public class Genre {
 
         private Integer genreId;
+        @Size(min=1, max=45, message="Genre name must be between 1 and 45 characters")
         private String genreName;
         private List<Book> books;
 

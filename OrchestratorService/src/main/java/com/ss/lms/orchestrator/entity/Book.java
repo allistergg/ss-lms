@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class Book implements Serializable{
 
     /**
@@ -11,7 +14,9 @@ public class Book implements Serializable{
 	 */
 	private static final long serialVersionUID = 7729047382432003306L;
 	private Integer bookId;
-    private String title;
+    @NotNull
+    @Size(min=1, max=45, message="Book title must be between 1 and 45 characters")
+	private String title;
     private Publisher publisher;
     private List<Author> authors;
     private List<Genre> genres;

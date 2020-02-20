@@ -4,14 +4,20 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class Author implements Serializable {
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 3043267215102912826L;
+	
 	private Integer authorId;
-    private String authorName;
+    @NotNull
+    @Size(min=2, max=45, message="Author name must be between 2 and 45 characters")
+	private String authorName;
     private List<Book> books;
 
     public Integer getAuthorId() {

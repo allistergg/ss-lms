@@ -3,11 +3,17 @@ package com.ss.lms.orchestrator.entity;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class Borrower {
 
     private Integer cardNo;
+    @Size(min=1, max=45, message="Borrower name must be between 1 and 45 characters")
     private String name;
+    @Size(min=1, max=45, message="Borrower address must be between 1 and 45 characters")
     private String address;
+    @Size(min=1, max=45, message="Borrower phone must be between 1 and 45 characters")
     private String phone;
     private List<Loan> loans;
 

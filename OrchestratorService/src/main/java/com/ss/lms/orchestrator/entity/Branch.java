@@ -3,12 +3,17 @@ package com.ss.lms.orchestrator.entity;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 
 public class Branch {
 
 
 	private Integer branchId;
+	@Size(min=1,max=45, message="Branch name must be between 1 and 45 characters")
 	private String branchName;
+	@Size(min=1,max=45, message="Branch address must be between 1 and 45 characters")
 	private String branchAddress;
     private List<Copy> copies;
 

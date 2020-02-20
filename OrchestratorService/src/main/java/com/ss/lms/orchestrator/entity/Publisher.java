@@ -2,13 +2,21 @@ package com.ss.lms.orchestrator.entity;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class Publisher {
 
     private Integer publisherId;
+    @NotNull
+    @Size(min=1, max=45, message="Publisher name must be between 1 and 45 characters")
     private String publisherName;
+    @Size(min=1, max=45, message="Publisher address must be between 1 and 45 characters" )
     private String publisherAddress;
-    private String publisherPhone;
+    @Size(min=1, max=45, message="Publisher address must be between 1 and 45 characters") 
+    String publisherPhone;
 
+    
     public Integer getPublisherId() {
         return publisherId;
     }

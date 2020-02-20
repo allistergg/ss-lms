@@ -22,22 +22,22 @@ public class BorrowerController {
 	
 	@PostMapping("/checkout")
 	public ResponseEntity<CheckoutDetails> checkoutBook(@RequestBody Loan l) {
-		System.out.println("In checkout endpoint");
+		
 		String builtUri = BORROWER_URI + "/checkout?" +
 				"bookId=" + l.getBook().getBookId() + "&" +
 				"branchId=" + l.getBranch().getBranchId() + "&" +
 				"cardNo=" + l.getBorrower().getCardNo();
-		System.out.println(builtUri);
+
 		return restTemplate.postForEntity(builtUri, l,CheckoutDetails.class);
 	}
 	
 	@PostMapping("/return")
 	public ResponseEntity<String> returnBook(@RequestBody Loan l) {
-		System.out.println("in return endpoint");
+	
 		String builtUri = BORROWER_URI + "/checkin?" +
 				"bookId=" + l.getBook().getBookId() + "&" +
 				"cardNo=" + l.getBorrower().getCardNo();
-		System.out.println(builtUri);
+
 		return restTemplate.postForEntity(builtUri, l, String.class);
 	}
 }
