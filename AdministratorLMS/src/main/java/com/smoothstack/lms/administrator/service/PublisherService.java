@@ -5,76 +5,68 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.smoothstack.lms.administrator.dao.PublisherDAO;
 import com.smoothstack.lms.administrator.model.Publisher;
 
-@Component
+@Service
 public class PublisherService {
 	
 	@Autowired
-	private Connection conn;
+	private ConnectionUtil connUtil;
 	@Autowired
 	private PublisherDAO pdao;
 	
 	// CREATE PUBLISHER
 	public Integer savePublisher(Publisher publisher) throws SQLException {
-		try {
-			Integer publisherId = pdao.addPublisher(publisher); // save new publisher.
+		try (Connection conn = connUtil.getConnection()) {
+			Integer publisherId = pdao.addPublisher(conn, publisher); // save new publisher.
 			conn.commit();
 			return publisherId;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with add publisher.");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
+	}
+	
+	// READ PUBLISHER BY ID
+	public List<Publisher> getPublisherById(Integer publisherId) throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			return pdao.readPublisherById(conn, publisherId);
+		} catch (ClassNotFoundException e) {
+			return null;
+		} 
 	}
 	
 	// READ PUBLISHERS
-	public List<Publisher> readPublishers() throws SQLException{
-		try {
-			return pdao.readPublishers();
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with read publishers.");
+	public List<Publisher> readPublishers() throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			return pdao.readPublishers(conn);
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
 	}
 	
 	// UPDATE PUBLISHER
-	public Boolean updatePublisher(Publisher publisher) throws SQLException{
-		try {
-			Boolean exists = pdao.updatePublisher(publisher);
+	public Boolean updatePublisher(Publisher publisher) throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			Boolean exists = pdao.updatePublisher(conn, publisher);
 			conn.commit();
 			return exists;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with update publisher.");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
 	}
 	
 	// DELETE PUBLISHER
-	public Boolean deletePublisher(Integer publisherId) throws SQLException{
-		try {
-			Boolean exists = pdao.deletePublisher(publisherId);
+	public Boolean deletePublisher(Integer publisherId) throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			Boolean exists = pdao.deletePublisher(conn, publisherId);
 			conn.commit();
 			return exists;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with delete Publisher");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
 	}
-
-	public Publisher getPublisherById(Integer publisherId) throws SQLException {
-		try {
-			return pdao.readPublisherById(publisherId);
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with read publisher by id.");
-		} 
-		return null;
-	}
-	
 
 }

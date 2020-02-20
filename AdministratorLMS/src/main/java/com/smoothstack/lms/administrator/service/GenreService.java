@@ -5,75 +5,68 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.smoothstack.lms.administrator.dao.GenreDAO;
 import com.smoothstack.lms.administrator.model.Genre;
 
-@Component
+@Service
 public class GenreService {
 	
 	@Autowired
-	private Connection conn;
+	private ConnectionUtil connUtil;
 	@Autowired
 	private GenreDAO gdao;
 	
 	// CREATE GENRE
 	public Integer saveGenre(Genre genre) throws SQLException {
-		try {
-			Integer genreId = gdao.addGenre(genre);
+		try (Connection conn = connUtil.getConnection()) {
+			Integer genreId = gdao.addGenre(conn, genre);
 			conn.commit();
 			return genreId;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with add genre.");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
 	}
 	
-	// UPDATE GENRE
-	public Boolean updateGenre(Genre genre) throws SQLException {
-		try {
-			Boolean exists = gdao.updateGenre(genre);
-			conn.commit();
-			return exists;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with update genre.");
-			conn.rollback();
-		} 
-		return null;
+	// READ GENRE BY ID
+	public List<Genre> getGenreById(int genreId) throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			return gdao.readGenreById(conn, genreId);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
 	}
 	
 	// READ GENRES
 	public List<Genre> readGenres() throws SQLException {
-		try {
-			return gdao.readGenres();
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with read genres.");
+		try (Connection conn = connUtil.getConnection()) {
+			return gdao.readGenres(conn);
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
+	}
+	
+	// UPDATE GENRE
+	public Boolean updateGenre(Genre genre) throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			Boolean exists = gdao.updateGenre(conn, genre);
+			conn.commit();
+			return exists;
+		} catch (ClassNotFoundException e) {
+			return null;
+		} 
 	}
 	
 	// DELETE GENRE
 	public Boolean deleteGenre(Integer genreId) throws SQLException {
-		try {
-			Boolean exists = gdao.deleteGenre(genreId);
+		try (Connection conn = connUtil.getConnection()) {
+			Boolean exists = gdao.deleteGenre(conn, genreId);
 			conn.commit();
 			return exists;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with delete genre.");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
-	}
-
-	public Genre getGenreById(int genreId) throws SQLException {
-		try {
-			return gdao.readGenreById(genreId);
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with read genre by id.");
-		}
-		return null;
 	}
 
 }

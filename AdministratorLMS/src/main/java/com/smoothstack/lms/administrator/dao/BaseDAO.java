@@ -7,14 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 public abstract class BaseDAO<T> {
 	
-	@Autowired
-	protected Connection conn;
-	
-	protected Integer save(String sql, Object[] vals) throws SQLException, ClassNotFoundException{
+	protected Integer save(Connection conn, String sql, Object[] vals) throws SQLException {
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		if(vals!=null){
 			int index = 1;
@@ -30,7 +25,7 @@ public abstract class BaseDAO<T> {
 		
 	}
 	
-	protected Integer saveReturnPk(String sql, Object[] vals) throws SQLException, ClassNotFoundException{
+	protected Integer saveReturnPk(Connection conn, String sql, Object[] vals) throws SQLException {
 		PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		if(vals!=null){
 			int index = 1;
@@ -50,7 +45,7 @@ public abstract class BaseDAO<T> {
 	}
 	
 	// deep read
-	protected List<T> read(String sql, Object[] vals) throws SQLException, ClassNotFoundException{
+	protected List<T> read(Connection conn, String sql, Object[] vals) throws SQLException {
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		if(vals!=null){
 			int index = 1;
@@ -59,13 +54,13 @@ public abstract class BaseDAO<T> {
 			}
 		}
 		ResultSet rs = pstmt.executeQuery();
-		return extractData(rs);
+		return extractData(conn, rs);
 	}
 	
-	abstract List<T> extractData(ResultSet rs) throws SQLException, ClassNotFoundException;
+	abstract List<T> extractData(Connection conn, ResultSet rs) throws SQLException;
 	
 	// shallow read
-	protected List<T> readFirstLevel(String sql, Object[] vals) throws SQLException, ClassNotFoundException{
+	protected List<T> readFirstLevel(Connection conn, String sql, Object[] vals) throws SQLException {
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		if(vals!=null) {
 			int index = 1;
@@ -74,9 +69,9 @@ public abstract class BaseDAO<T> {
 			}
 		}
 		ResultSet rs = pstmt.executeQuery();
-		return extractDataFirstLevel(rs);
+		return extractDataFirstLevel(conn, rs);
 	}
 
-	abstract List<T> extractDataFirstLevel(ResultSet rs) throws SQLException, ClassNotFoundException;
+	abstract List<T> extractDataFirstLevel(Connection conn, ResultSet rs) throws SQLException;
 
 }

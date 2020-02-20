@@ -5,75 +5,68 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.smoothstack.lms.administrator.dao.BorrowerDAO;
 import com.smoothstack.lms.administrator.model.Borrower;
 
-@Component
+@Service
 public class BorrowerService {
 	
 	@Autowired
-	private Connection conn;
+	private ConnectionUtil connUtil;
 	@Autowired
 	private BorrowerDAO bodao;
 	
 	// CREATE BORROWER
 	public Integer saveBorrower(Borrower borrower) throws SQLException {
-		try {
-			Integer cardNo = bodao.addBorrower(borrower);
+		try (Connection conn = connUtil.getConnection()) {
+			Integer cardNo = bodao.addBorrower(conn, borrower);
 			conn.commit();
 			return cardNo;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with add borrower.");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
 	}
 	
-	// READ BORROWERS
-	public List<Borrower> readBorrowers() throws SQLException{
-		try {
-			return bodao.readBorrowers();
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with read borrowers.");
+	// READ BORROWER BY CARD NO
+	public List<Borrower> getBorrowerByCardNo(Integer cardNo) throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			return bodao.readBorrowerCardNo(conn, cardNo);
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
+	}	
+	
+	// READ BORROWERS
+	public List<Borrower> readBorrowers() throws SQLException {
+		try (Connection conn = connUtil.getConnection()) {
+			return bodao.readBorrowers(conn);
+		} catch (ClassNotFoundException e) {
+			return null;
+		} 
 	}
 	
 	// UPDATE BORROWER
 	public Boolean updateBorrower(Borrower borrower) throws SQLException {
-		try {
-			Boolean exists = bodao.updateBorrower(borrower);
+		try (Connection conn = connUtil.getConnection()) {
+			Boolean exists = bodao.updateBorrower(conn, borrower);
 			conn.commit();
 			return exists;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with update borrower.");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
 	}
 	
 	// DELETE BORROWER
 	public Boolean deleteBorrower(Integer cardNo) throws SQLException {
-		try {
-			Boolean exists = bodao.deleteBorrower(cardNo);
+		try (Connection conn = connUtil.getConnection()) {
+			Boolean exists = bodao.deleteBorrower(conn, cardNo);
 			conn.commit();
 			return exists;
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with delete borrower.");
-			conn.rollback();
+		} catch (ClassNotFoundException e) {
+			return null;
 		} 
-		return null;
 	}
-
-	public Borrower getBorrowerByCardNo(Integer cardNo) throws SQLException {
-		try {
-			return bodao.readBorrowerCardNo(cardNo);
-		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println("Something failed with read borrower by card number.");
-		} 
-		return null;
-	}	
 
 }

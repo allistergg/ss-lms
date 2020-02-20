@@ -1,6 +1,7 @@
 
 package com.smoothstack.lms.administrator.dao;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,48 +18,39 @@ public class AuthorDAO extends BaseDAO<Author> {
 	@Autowired
 	private BookDAO bdao;
 	
-	public Integer addAuthorReturnPK(Author author) throws SQLException, ClassNotFoundException {
-		// returns the public key of the newly author
-		return saveReturnPk("insert into tbl_author (authorName) values (?)", new Object[] { author.getAuthorName() });
+	public Integer addAuthorReturnPK(Connection conn, Author author) throws SQLException {
+		return saveReturnPk(conn, "insert into tbl_author (authorName) values (?)", new Object[] { author.getAuthorName() });
 	}
 
-	public Boolean updateAuthor(Author author) throws SQLException, ClassNotFoundException {
-		return save("update tbl_author set authorName = ? where authorId = ?", 
+	public Boolean updateAuthor(Connection conn, Author author) throws SQLException {
+		return save(conn, "update tbl_author set authorName = ? where authorId = ?", 
 				new Object[] { author.getAuthorName(), author.getAuthorId() }) > 0;
 	}
 
-	public Boolean deleteAuthor(Integer authorId) throws SQLException, ClassNotFoundException {
-		return save("delete from tbl_author where authorId = ?", new Object[] { authorId }) > 0;
+	public Boolean deleteAuthor(Connection conn, Integer authorId) throws SQLException {
+		return save(conn, "delete from tbl_author where authorId = ?", new Object[] { authorId }) > 0;
 	}
 	
-	public List<Author> readAuthors() throws SQLException, ClassNotFoundException {
-		return read("select * from tbl_author", null);
+	public List<Author> readAuthors(Connection conn) throws SQLException {
+		return read(conn, "select * from tbl_author", null);
 	}
 	
-	public Author readAuthorById(Integer authorId) throws SQLException, ClassNotFoundException {
-		List<Author> authors = read("select * from tbl_author where authorId = ?", new Object[] { authorId });
-		if (authors.size() == 0) {
-			return null;
-		}
-		return authors.get(0);
+	public List<Author> readAuthorById(Connection conn, Integer authorId) throws SQLException {
+		return read(conn, "select * from tbl_author where authorId = ?", new Object[] { authorId });
 	}
 	
-	public Boolean authorExists(Integer authorId) throws SQLException, ClassNotFoundException {
-		return read("select * from tbl_author where authorId = ?", new Object[] { authorId }).size() > 0;
-	}
-	
-	public void deleteAuthorBooks(Author author) throws SQLException, ClassNotFoundException {
-		save("delete from tbl_book_authors where authorId = ?", new Object[] { author.getAuthorId() });
+	public Boolean authorExists(Connection conn, Integer authorId) throws SQLException {
+		return read(conn, "select * from tbl_author where authorId = ?", new Object[] { authorId }).size() > 0;
 	}
 
 	@Override
-	public List<Author> extractData(ResultSet rs) throws SQLException, ClassNotFoundException {
+	public List<Author> extractData(Connection conn, ResultSet rs) throws SQLException {
 		List<Author> authors = new ArrayList<>();
 		while(rs.next()){
 			Author a = new Author();
 			a.setAuthorId(rs.getInt("authorId"));
 			a.setAuthorName(rs.getString("authorName"));
-			a.setBooks(bdao.readFirstLevel("select * from tbl_book where bookId IN "
+			a.setBooks(bdao.readFirstLevel(conn, "select * from tbl_book where bookId IN "
 					+ "(select bookId from tbl_book_authors where authorId = ?)", new Object[] { a.getAuthorId() }));
 			authors.add(a);
 		}
@@ -66,7 +58,7 @@ public class AuthorDAO extends BaseDAO<Author> {
 	}
 	
 	@Override
-	public List<Author> extractDataFirstLevel(ResultSet rs) throws SQLException, ClassNotFoundException {
+	public List<Author> extractDataFirstLevel(Connection conn, ResultSet rs) throws SQLException {
 		List<Author> authors = new ArrayList<>();
 		while(rs.next()){
 			Author a = new Author();
