@@ -34,32 +34,34 @@ public class BookService {
 	public Boolean saveBook(Book book) throws SQLException {
 		try (Connection conn = connUtil.getConnection()) {
 			try {
-				// check if the publisher exists
-				if (book.getPublisher() != null && !pdao.publisherExists(conn, book.getPublisher().getPublisherId())) {
-					return false;
-				} 
-				// check if the genres actually exist
-				if (book.getGenres() == null) { book.setGenres(new ArrayList<Genre>()); }
-				for (Genre g: book.getGenres()) {
-					if (!gdao.genreExists(conn, g.getGenreId())) {
-						return false;
-					}
-				}
-				// check if the authors actually exist
-				if (book.getAuthors() == null) { book.setAuthors(new ArrayList<Author>()); }
-				for(Author a: book.getAuthors()) {
-					if (!adao.authorExists(conn, a.getAuthorId())) {
-						return false;
-					}
-				}
 				Integer bookId = bdao.addBookReturnPk(conn, book); // save new book and get primary key
 				book.setBookId(bookId);
-				// now add the books and genres
-				for (Genre g: book.getGenres()) {
-					bdao.insertBookGenres(conn, book, g);
+				// check if the publisher exists
+				if (book.getPublisher() != null && !pdao.publisherExists(conn, book.getPublisher().getPublisherId())) {
+					conn.rollback();
+					return false;
+				} 
+				// check if the genres actually exist, then add them to book_genres
+				if (book.getGenres() != null) { 
+					for (Genre g: book.getGenres()) {
+						if (!gdao.genreExists(conn, g.getGenreId())) {
+							conn.rollback();
+							return false;
+						} else {
+							bdao.insertBookGenres(conn, book, g);
+						}
+					}
 				}
-				for (Author a: book.getAuthors()) {
-					bdao.insertBookAuthors(conn, book, a);
+				// check if the authors actually exist, then add them to book_authors
+				if (book.getAuthors() != null) {  
+					for(Author a: book.getAuthors()) {
+						if (!adao.authorExists(conn, a.getAuthorId())) {
+							conn.rollback();
+							return false;
+						} else {
+							bdao.insertBookAuthors(conn, book, a);
+						}
+					}
 				}
 				conn.commit();
 				return true;
