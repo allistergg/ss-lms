@@ -1,5 +1,0 @@
-com\smoothstack\borrower\controller\BorrowerController.class
-com\smoothstack\borrower\services\IBorrowerServices.class
-com\smoothstack\borrower\util\HeaderUtils.class
-com\smoothstack\borrower\domain\CheckOutDetails.class
-com\smoothstack\borrower\services\BorrowerServices.class
