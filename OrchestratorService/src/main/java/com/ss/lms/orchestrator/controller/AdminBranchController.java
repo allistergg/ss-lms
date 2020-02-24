@@ -17,9 +17,9 @@ import com.ss.lms.orchestrator.entity.Branch;
 public class AdminBranchController extends AdminController<Branch>{
 	
 	@Autowired
-	RestTemplate restTemplate;
+	private RestTemplate restTemplate;
 	
-	private String ADMIN_BRANCH_URI = "http://admin-service/lms/branches/";
+	private final String ADMIN_BRANCH_URI = "http://admin-service/lms/branches/";
 
 	@Override
 	public ResponseEntity<Branch[]> getAll() {

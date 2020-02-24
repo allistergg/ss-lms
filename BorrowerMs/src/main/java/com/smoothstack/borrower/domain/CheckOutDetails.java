@@ -1,59 +1,87 @@
 package com.smoothstack.borrower.domain;
 
+import java.util.Objects;
+
+
 public class CheckOutDetails {
 
-	private String bookTitle;
-	private String dueDate;
 
-	/**
-	 * @return the bookTitle
-	 */
-	public String getBookTitle() {
-		return bookTitle;
-	}
+  private String bookTitle;
 
-	/**
-	 * @param bookTitle the bookTitle to set
-	 */
-	public void setBookTitle(String bookTitle) {
-		this.bookTitle = bookTitle;
-	}
 
-	/**
-	 * @return the dueDate
-	 */
-	public String getDueDate() {
-		return dueDate;
-	}
+  private String dueDate;
 
-	/**
-	 * @param dueDate the dueDate to set
-	 */
-	public void setDueDate(String dueDate) {
-		this.dueDate = dueDate;
-	}
+  /**
+   * @return the bookTitle
+   */
 
-	@Override
-	public String toString() {
-		return "CheckOutDetails [bookTitle=" + bookTitle + ", dueDate=" + dueDate + "]";
-	}
+  public String getBookTitle() {
+    return bookTitle;
+  }
 
-	/**
-	 * @param bookTitle
-	 * @param dueDate
-	 */
-	public CheckOutDetails(String bookTitle, String dueDate) {
-		super();
-		this.bookTitle = bookTitle;
-		this.dueDate = dueDate;
-	}
+  /**
+   * @param bookTitle the bookTitle to set
+   */
+  public void setBookTitle(String bookTitle) {
+    this.bookTitle = bookTitle;
+  }
 
-	/**
-	 * 
-	 */
-	public CheckOutDetails() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+  /**
+   * @return the dueDate
+   */
+  public String getDueDate() {
+    return dueDate;
+  }
+
+  /**
+   * @param dueDate the dueDate to set
+   */
+  public void setDueDate(String dueDate) {
+    this.dueDate = dueDate;
+  }
+
+  @Override
+  public String toString() {
+    return "CheckOutDetails [bookTitle=" + bookTitle + ", dueDate=" + dueDate + "]";
+  }
+
+  /**
+   * @param bookTitle
+   * @param dueDate
+   */
+  public CheckOutDetails(String bookTitle, String dueDate) {
+    super();
+    this.bookTitle = bookTitle;
+    this.dueDate = dueDate;
+  }
+
+  /**
+   * 
+   */
+  public CheckOutDetails() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(bookTitle, dueDate);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    CheckOutDetails other = (CheckOutDetails) obj;
+    return Objects.equals(bookTitle, other.bookTitle) && Objects.equals(dueDate, other.dueDate);
+  }
+
 
 }

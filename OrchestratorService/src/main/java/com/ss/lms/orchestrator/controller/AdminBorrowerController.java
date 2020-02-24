@@ -17,9 +17,9 @@ import com.ss.lms.orchestrator.entity.Borrower;
 public class AdminBorrowerController extends AdminController<Borrower> {
 	
 	@Autowired
-	RestTemplate restTemplate;
+	private RestTemplate restTemplate;
 	
-	private String ADMIN_BORROWER_URI = "http://admin-service/lms/borrowers/";
+	private final String ADMIN_BORROWER_URI = "http://admin-service/lms/borrowers/";
 
 	@Override
 	public ResponseEntity<Borrower[]> getAll() {
