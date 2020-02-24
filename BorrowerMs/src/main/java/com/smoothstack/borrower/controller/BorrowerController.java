@@ -2,6 +2,8 @@ package com.smoothstack.borrower.controller;
 
 import java.sql.SQLException;
 
+import javax.persistence.NoResultException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +32,17 @@ public class BorrowerController {
 	private BorrowerServices borrowerService = new BorrowerServices();
 	private static final Logger log = LoggerFactory.getLogger(BorrowerController.class);
 
-	@RequestMapping(value = "/new/{branchId}/{bookId}/{cardNo}", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@RequestMapping(value = "/new/{branchId}/{bookId}/{cardNo}", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<CheckOutDetails> checkOutDetails(@PathVariable("branchId") Integer branchId,
 			@PathVariable("bookId") Integer bookId, @PathVariable("cardNo") Integer cardNo) {
 
 		try {
 
 			CheckOutDetails details = borrowerService.checkOutBook(branchId, bookId, cardNo);
-			return new ResponseEntity<>(details, null, HttpStatus.OK);
+			return new ResponseEntity<>(details, null, HttpStatus.CREATED);
 
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (NoResultException | ClassNotFoundException | SQLException e) {
 
 			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
 
@@ -60,33 +63,34 @@ public class BorrowerController {
 		}
 	}
 
-	@RequestMapping(value = "/return/{bookId}/{cardNo}", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@RequestMapping(value = "/return/{bookId}/{cardNo}", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<String> checkInBook(@PathVariable("bookId") Integer bookId,
 			@PathVariable("cardNo") Integer cardNo) {
 
 		String resp = "";
-		log.debug("bookId = " + bookId);
+		log.info("bookId = " + bookId + ", cardNo = " + cardNo);
 		try {
 			boolean status = borrowerService.checkInBook(bookId, cardNo);
 			if (status) {
 				resp = "Book has been checked in successfully.";
 
-				return new ResponseEntity<String>(resp, null, HttpStatus.OK);
+				return new ResponseEntity<String>(resp, null, HttpStatus.ACCEPTED);
 			} else {
 				resp = "Failed to check in, please try again.";
 				return new ResponseEntity<String>(resp, null, HttpStatus.NOT_MODIFIED);
 
 			}
 
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (NoResultException | ClassNotFoundException | SQLException e) {
 
 			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
 			return new ResponseEntity<>("Check In book failed" + e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
-		catch (InvalidCardNumberException | InvalidBookIdException e1) {
+		} catch (InvalidCardNumberException | InvalidBookIdException e1) {
 
-			log.error("Please try again, as there was invalid data. Unable to make changes, as a result." + e1.getMessage());
+			log.error("Please try again, as there was invalid data. Unable to make changes, as a result."
+					+ e1.getMessage());
 			return new ResponseEntity<>("Check In book failed" + e1.getMessage(), HttpStatus.BAD_REQUEST);
-	}
+		}
 	}
 }
