@@ -18,18 +18,16 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "tbl_book_loans")
 public class Loans implements Serializable {
+
 	
-	
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "bookId")
 	private Integer bookId;
 
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	
 	@Column(name = "branchId")
 	private Integer branchId;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "cardNo")
 	private Integer cardNo;
 

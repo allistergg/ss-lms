@@ -1,6 +1,5 @@
 package com.smoothstack.borrower.services;
 
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -29,8 +28,7 @@ public class BorrowerServices implements IBorrowerServices {
 	private BorrowerDAO bdao;
 
 	@Override
-	public CheckOutDetails checkOutBook(Integer branchId, Integer bookId, Integer cardNo) throws SQLException,
-			ClassNotFoundException, InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	public CheckOutDetails checkOutBook(Integer branchId, Integer bookId, Integer cardNo) throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 		CheckOutDetails details = null;
 
 		try {
@@ -41,7 +39,7 @@ public class BorrowerServices implements IBorrowerServices {
 
 			details = new CheckOutDetails(bookTitle, dueDate.toString());
 
-		} catch (NoResultException | ClassNotFoundException | SQLException e) {
+		} catch (NoResultException e) {
 
 			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
 
@@ -60,7 +58,7 @@ public class BorrowerServices implements IBorrowerServices {
 
 	@Override
 	public boolean checkInBook(Integer bookId, Integer cardNo)
-			throws ClassNotFoundException, SQLException, InvalidCardNumberException, InvalidBookIdException {
+			throws InvalidCardNumberException, InvalidBookIdException {
 
 		try {
 
@@ -68,7 +66,7 @@ public class BorrowerServices implements IBorrowerServices {
 
 			return loans != null;
 
-		} catch (NoResultException | ClassNotFoundException | SQLException e) {
+		} catch (NoResultException e) {
 
 			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
 			throw e;

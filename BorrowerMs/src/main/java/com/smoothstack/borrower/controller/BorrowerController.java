@@ -1,7 +1,5 @@
 package com.smoothstack.borrower.controller;
 
-import java.sql.SQLException;
-
 import javax.persistence.NoResultException;
 
 import org.slf4j.Logger;
@@ -13,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smoothstack.borrower.domain.CheckOutDetails;
@@ -42,7 +39,7 @@ public class BorrowerController {
 			CheckOutDetails details = borrowerService.checkOutBook(branchId, bookId, cardNo);
 			return new ResponseEntity<>(details, null, HttpStatus.CREATED);
 
-		} catch (NoResultException | ClassNotFoundException | SQLException e) {
+		} catch (NoResultException e) {
 
 			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
 
@@ -82,7 +79,7 @@ public class BorrowerController {
 
 			}
 
-		} catch (NoResultException | ClassNotFoundException | SQLException e) {
+		} catch (NoResultException e) {
 
 			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
 			return new ResponseEntity<>("Check In book failed" + e.getMessage(), HttpStatus.BAD_REQUEST);

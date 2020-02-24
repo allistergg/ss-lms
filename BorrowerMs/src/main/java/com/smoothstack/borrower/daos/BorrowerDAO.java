@@ -1,6 +1,5 @@
 package com.smoothstack.borrower.daos;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,8 +32,7 @@ public class BorrowerDAO {
 
 	public String checkOut(Integer branchId, Integer bookId, Integer cardNo)
 
-			throws SQLException, ClassNotFoundException, NoResultException, InvalidCardNumberException, InvalidBranchIdException,
-			InvalidBookIdException {
+			throws NoResultException, InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
 		Timestamp dateOut = new java.sql.Timestamp(new Date().getTime());
 
@@ -80,12 +78,11 @@ public class BorrowerDAO {
 	}
 
 	public Loans returnBook(Integer bookId, Integer cardNo)
-			throws NoResultException, InvalidCardNumberException, InvalidBookIdException, ClassNotFoundException, SQLException {
+			throws NoResultException, InvalidCardNumberException, InvalidBookIdException {
 
 		Loans loans = null;
 		Timestamp dateIn = new java.sql.Timestamp(new Date().getTime());
-		
-		
+
 		if (!isCardNumberValid(cardNo)) {
 			throw new InvalidCardNumberException();
 		}
@@ -93,33 +90,34 @@ public class BorrowerDAO {
 			throw new InvalidBookIdException();
 		}
 		try {
-		
-		String hsql = "UPDATE Loans SET dateIn='" + dateIn + "' where bookId =" + bookId + " and cardNo = " + cardNo;
-		//log.info(hsql);
-		Query query = entityManager.createQuery(hsql);
-		entityManager.flush();
-		Integer result = query.executeUpdate();
-		entityManager.clear();
 
-		loans = (Loans) entityManager.createQuery("SELECT l from Loans l where l.bookId = ?1 and l.cardNo = ?2")
-				.setParameter(1, bookId).setParameter(2, cardNo).getSingleResult();
+			String hsql = "UPDATE Loans SET dateIn='" + dateIn + "' where bookId =" + bookId + " and cardNo = "
+					+ cardNo;
+			// log.info(hsql);
+			Query query = entityManager.createQuery(hsql);
+			entityManager.flush();
+			Integer result = query.executeUpdate();
+			entityManager.clear();
 
-		//log.info(loans.toString());
-		return loans;
-		} catch(NoResultException nre){
+			loans = (Loans) entityManager.createQuery("SELECT l from Loans l where l.bookId = ?1 and l.cardNo = ?2")
+					.setParameter(1, bookId).setParameter(2, cardNo).getSingleResult();
+
+			// log.info(loans.toString());
+			return loans;
+		} catch (NoResultException nre) {
 			log.error("Failed to check in due to " + nre.getMessage());
 			throw nre;
 		}
 	}
 
-	public String getBookTitle(Integer bookId) throws ClassNotFoundException, SQLException {
+	public String getBookTitle(Integer bookId) {
 		Book book = (Book) entityManager.createQuery("SELECT b from Book b where b.bookId = ?1").setParameter(1, bookId)
 				.getSingleResult();
 
 		return book != null ? book.getTitle() : "";
 	}
 
-	public boolean isCardNumberValid(Integer cardNo) throws SQLException, ClassNotFoundException {
+	public boolean isCardNumberValid(Integer cardNo) {
 
 		Loans loans = (Loans) entityManager.createQuery("SELECT l from Loans l where l.cardNo = ?1")
 				.setParameter(1, cardNo).getSingleResult();
@@ -128,7 +126,7 @@ public class BorrowerDAO {
 
 	}
 
-	public boolean isBookIdValid(Integer bookId) throws SQLException, ClassNotFoundException {
+	public boolean isBookIdValid(Integer bookId) {
 
 		Book book = (Book) entityManager.createQuery("SELECT b from Book b where b.bookId = ?1").setParameter(1, bookId)
 				.getSingleResult();
@@ -136,7 +134,7 @@ public class BorrowerDAO {
 		return book != null;
 	}
 
-	public boolean isBranchIdValid(Integer branchId) throws SQLException, ClassNotFoundException {
+	public boolean isBranchIdValid(Integer branchId) {
 
 		Branch branch = (Branch) entityManager.createQuery("SELECT br from Branch br where br.branchId = ?1")
 				.setParameter(1, branchId).getSingleResult();
@@ -144,7 +142,7 @@ public class BorrowerDAO {
 		return branch != null;
 	}
 
-	private void setForeignKeyChecks(int val) throws ClassNotFoundException, SQLException {
+	private void setForeignKeyChecks(int val) {
 
 		entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS= " + val).executeUpdate();
 

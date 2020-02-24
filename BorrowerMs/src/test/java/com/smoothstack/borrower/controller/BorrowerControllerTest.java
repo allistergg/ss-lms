@@ -30,146 +30,99 @@ import com.smoothstack.borrower.services.BorrowerServices;
  */
 public class BorrowerControllerTest {
 
-  @InjectMocks
-  private BorrowerController borrowerController;
+	@InjectMocks
+	private BorrowerController borrowerController;
 
-  @Mock
-  private BorrowerServices borrowerService = new BorrowerServices();
+	@Mock
+	private BorrowerServices borrowerService = new BorrowerServices();
 
-  @Before
-  public void setUp() {
-    MockitoAnnotations.initMocks(this);
-  }
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
 
-  @Test
-  public void testCheckOutBook() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	@Test
+	public void testCheckOutBook() throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
-    CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
-    when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt())).thenReturn(details);
-    ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
-    assertEquals(retDetails.getBody(), details);
-  }
+		CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
+		when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt())).thenReturn(details);
+		ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
+		assertEquals(retDetails.getBody(), details);
+	}
 
-  @Test
-  public void testCheckOutBookException1() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	@Test
+	public void testCheckOutBookException3()
+			throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
-    CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
-    when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt()))
-        .thenThrow(new ClassNotFoundException());
-    ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
-    assertNull(retDetails.getBody());
-  }
+		CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
+		when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt())).thenThrow(new InvalidCardNumberException());
+		ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
+		assertNull(retDetails.getBody());
+	}
 
-  @Test
-  public void testCheckOutBookException2() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	@Test
+	public void testCheckOutBookException4()
+			throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
-    CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
-    when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt())).thenThrow(new SQLException());
-    ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
-    assertNull(retDetails.getBody());
-  }
+		CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
+		when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt())).thenThrow(new InvalidBranchIdException());
+		ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
+		assertNull(retDetails.getBody());
+	}
 
-  @Test
-  public void testCheckOutBookException3() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	@Test
+	public void testCheckOutBookException5()
+			throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
-    CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
-    when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt()))
-        .thenThrow(new InvalidCardNumberException());
-    ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
-    assertNull(retDetails.getBody());
-  }
+		CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
+		when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt())).thenThrow(new InvalidBookIdException());
+		ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
+		assertNull(retDetails.getBody());
+	}
 
-  @Test
-  public void testCheckOutBookException4() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	@Test
+	public void testCheckOutBookException6()
+			throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
-    CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
-    when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt()))
-        .thenThrow(new InvalidBranchIdException());
-    ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
-    assertNull(retDetails.getBody());
-  }
+		CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
+		when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt())).thenThrow(new NoResultException());
+		ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
+		assertNull(retDetails.getBody());
+	}
 
-  @Test
-  public void testCheckOutBookException5() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	@Test
+	public void testCheckInBook() throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
-    CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
-    when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt()))
-        .thenThrow(new InvalidBookIdException());
-    ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
-    assertNull(retDetails.getBody());
-  }
+		when(borrowerService.checkInBook(anyInt(), anyInt())).thenReturn(true);
+		ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
+		assertEquals(response.getBody(), "Book has been checked in successfully.");
+	}
 
-  @Test
-  public void testCheckOutBookException6() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	@Test
+	public void testCheckInBookException3()
+			throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
-    CheckOutDetails details = new CheckOutDetails("some title", "02/22/2020");
-    when(borrowerService.checkOutBook(anyInt(), anyInt(), anyInt()))
-        .thenThrow(new NoResultException());
-    ResponseEntity<CheckOutDetails> retDetails = borrowerController.checkOutDetails(12, 34, 456);
-    assertNull(retDetails.getBody());
-  }
+		when(borrowerService.checkInBook(anyInt(), anyInt())).thenThrow(new InvalidCardNumberException());
+		ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
+		assertEquals(response.getBody(), "Check In book failednull");
+	}
 
-  @Test
-  public void testCheckInBook() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	@Test
+	public void testCheckInBookException4()
+			throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
-    when(borrowerService.checkInBook(anyInt(), anyInt())).thenReturn(true);
-    ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
-    assertEquals(response.getBody(), "Book has been checked in successfully.");
-  }
+		when(borrowerService.checkInBook(anyInt(), anyInt())).thenThrow(new InvalidBookIdException());
+		ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
+		assertEquals(response.getBody(), "Check In book failednull");
+	}
 
-  @Test
-  public void testCheckInBookException1() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	@Test
+	public void testCheckInBookException5()
+			throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
 
-    when(borrowerService.checkInBook(anyInt(), anyInt())).thenThrow(new ClassNotFoundException());
-    ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
-    assertEquals(response.getBody(), "Check In book failednull");
-  }
-
-  @Test
-  public void testCheckInBookException2() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
-
-    when(borrowerService.checkInBook(anyInt(), anyInt())).thenThrow(new SQLException());
-    ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
-    assertEquals(response.getBody(), "Check In book failednull");
-  }
-
-  @Test
-  public void testCheckInBookException3() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
-
-    when(borrowerService.checkInBook(anyInt(), anyInt()))
-        .thenThrow(new InvalidCardNumberException());
-    ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
-    assertEquals(response.getBody(), "Check In book failednull");
-  }
-
-
-  @Test
-  public void testCheckInBookException4() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
-
-    when(borrowerService.checkInBook(anyInt(), anyInt())).thenThrow(new InvalidBookIdException());
-    ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
-    assertEquals(response.getBody(), "Check In book failednull");
-  }
-
-  @Test
-  public void testCheckInBookException5() throws ClassNotFoundException, SQLException,
-      InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
-
-    when(borrowerService.checkInBook(anyInt(), anyInt())).thenThrow(new NoResultException());
-    ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
-    assertEquals(response.getBody(), "Check In book failednull");
-  }
+		when(borrowerService.checkInBook(anyInt(), anyInt())).thenThrow(new NoResultException());
+		ResponseEntity<String> response = borrowerController.checkInBook(12, 456);
+		assertEquals(response.getBody(), "Check In book failednull");
+	}
 
 }
