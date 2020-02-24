@@ -27,11 +27,11 @@ public class LibrarianService {
 		return brrepo.findByBranchId(id);
 	}
 
-<<<<<<< HEAD
-	public void updateBranch(Branch branch) throws SQLException, ClassNotFoundException {
-=======
+
+
+
 	public void updateBranch(Branch branch) {
->>>>>>> 15c5d5a6e89bb354c8c748ec783b49363d63efeb
+
 		brrepo.save(branch);
 	}
 	
