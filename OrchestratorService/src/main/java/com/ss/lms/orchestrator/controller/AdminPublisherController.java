@@ -17,9 +17,9 @@ import com.ss.lms.orchestrator.entity.Publisher;
 public class AdminPublisherController extends AdminController<Publisher> {
 	
 	@Autowired
-	RestTemplate restTemplate;
+	private RestTemplate restTemplate;
 	
-	private String ADMIN_PUBLISHER_URI = "http://admin-service/lms/publishers/";
+	private final String ADMIN_PUBLISHER_URI = "http://admin-service/lms/publishers/";
 
 	@Override
 	public ResponseEntity<Publisher[]> getAll() {

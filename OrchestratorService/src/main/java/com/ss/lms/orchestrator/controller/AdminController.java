@@ -17,10 +17,6 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public abstract class AdminController<T> {
 	
-	@Autowired
-	RestTemplate restTemplate;
-	
-	
 	@GetMapping(produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.OK)
 	public abstract ResponseEntity<T[]> getAll();
