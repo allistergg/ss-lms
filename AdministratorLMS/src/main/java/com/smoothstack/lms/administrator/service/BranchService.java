@@ -1,7 +1,4 @@
 package com.smoothstack.lms.administrator.service;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,59 +11,52 @@ import com.smoothstack.lms.administrator.model.Branch;
 public class BranchService {
 	
 	@Autowired
-	private ConnectionUtil connUtil;
-	@Autowired
 	private BranchDAO brdao;
 	
 	// CREATE BRANCH
-	public Integer saveBranch(Branch branch) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Integer branchId = brdao.addBranch(conn, branch);
-			conn.commit();
-			return branchId;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Branch saveBranch(Branch branch) {
+		return brdao.save(branch);
 	}
 	
 	// READ BRANCH BY ID
-	public List<Branch> getBranchById(Integer branchId) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			return brdao.readBranchById(conn, branchId);
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Branch> getBranchById(Integer branchId) {
+		Result<Branch> rs = new Result<Branch>();
+		if (brdao.existsById(branchId)) {
+			rs.setResult(brdao.findById(branchId).get());
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}	
 	
 	// READ BRANCHES
-	public List<Branch> readBranches() throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			return brdao.readBranches(conn);
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
+	public List<Branch> readBranches() {
+		return brdao.findAll();
 	}
 	
 	// UPDATE BRANCH
-	public Boolean updateBranch(Branch branch) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Boolean exists = brdao.updateBranch(conn, branch);
-			conn.commit();
-			return exists;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Void> updateBranch(Branch branch) {
+		Result<Void> rs = new Result<Void>();
+		if (brdao.existsById(branch.getBranchId())) {
+			brdao.save(branch);
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}
 	
 	// DELETE BRANCH
-	public Boolean deleteBranch(Integer branchId) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Boolean exists = brdao.deleteBranch(conn, branchId);
-			conn.commit();
-			return exists;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Void> deleteBranch(Integer branchId) {
+		Result<Void> rs = new Result<Void>();
+		if (brdao.existsById(branchId)) {
+			brdao.deleteById(branchId);
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}
 
 }

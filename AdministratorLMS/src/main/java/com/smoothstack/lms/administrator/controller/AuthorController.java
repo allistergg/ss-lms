@@ -1,7 +1,6 @@
 package com.smoothstack.lms.administrator.controller;
 
 import java.net.URI;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +16,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smoothstack.lms.administrator.model.Author;
 import com.smoothstack.lms.administrator.service.AuthorService;
+import com.smoothstack.lms.administrator.service.Result;
 
 @RestController
 public class AuthorController {
+	
 	@Autowired
 	private AuthorService authorService;
 
@@ -27,97 +28,57 @@ public class AuthorController {
 	@RequestMapping(path="/lms/authors", method=RequestMethod.POST, 
 			consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Void> addAuthor(@RequestBody Author author) {
-		try {
-			Integer authorId = authorService.saveAuthor(author);
-			// Connection class not found
-			if (authorId == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(authorId)
-                    .toUri();
-			return ResponseEntity.created(location).build();
-		} catch (SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
-		}
+		Author savedAuthor = authorService.saveAuthor(author);
+		
+		// location header
+		URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedAuthor.getAuthorId())
+                .toUri();
+		
+		return ResponseEntity.created(location).build();
 	}
 	
 	// READ AUTHOR BY ID
 	@RequestMapping(path = "/lms/authors/{authorId}", method=RequestMethod.GET,
 			produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Author> getAuthorById(@PathVariable Integer authorId) {
-		try {
-			List<Author> authors = authorService.getAuthorById(authorId);
-			// Connection class not found
-			if (authors == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			// No authors with that Id
-			if (authors.size() == 0) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			return new ResponseEntity<Author>(authors.get(0), HttpStatus.OK);
-		} catch(SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+		Result<Author> rs = authorService.getAuthorById(authorId);
+		if (!rs.getIsSuccess()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+		return new ResponseEntity<Author>(rs.getResult(), HttpStatus.OK);
 	}
 	
 	// READ AUTHORS
 	@RequestMapping(path = "/lms/authors", method=RequestMethod.GET,
 			produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<List<Author>> getAuthors() {
-		try {
-			List<Author> authors = authorService.readAuthors();
-			// Connection class not found
-			if (authors == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			return new ResponseEntity<List<Author>>(authors, HttpStatus.OK);
-		} catch(SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
-		}
+		List<Author> authors = authorService.readAuthors();
+		return new ResponseEntity<List<Author>>(authors, HttpStatus.OK);
 	}
 	
 	// UPDATE AUTHOR
 	@RequestMapping(path="/lms/authors/{authorId}", method=RequestMethod.PUT,
 			consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Void> updateAuthor(@RequestBody Author author, @PathVariable Integer authorId) {
-		try {
-			author.setAuthorId(authorId);
-			Boolean exists = authorService.updateAuthor(author);
-			// Connection class not found
-			if (exists == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			// The author does not exist
-			if (!exists) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} catch(SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+		author.setAuthorId(authorId);
+		Result<Void> rs = authorService.updateAuthor(author);
+		if (!rs.getIsSuccess()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
 	// DELETE AUTHOR
 	@RequestMapping(path = "/lms/authors/{authorId}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteAuthor(@PathVariable Integer authorId) {
-		try {
-			Boolean exists = authorService.deleteAuthor(authorId);
-			// Connection class not found
-			if (exists == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			// The author does not exist
-			if (!exists) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} catch(SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+		Result<Void> rs = authorService.deleteAuthor(authorId);
+		if (!rs.getIsSuccess()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 

@@ -1,7 +1,6 @@
 package com.smoothstack.lms.administrator.controller;
 
 import java.net.URI;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.smoothstack.lms.administrator.model.Publisher;
 import com.smoothstack.lms.administrator.service.PublisherService;
+import com.smoothstack.lms.administrator.service.Result;
 
 @RestController
 public class PublisherController {
@@ -27,96 +27,56 @@ public class PublisherController {
 	@RequestMapping(path="/lms/publishers", method=RequestMethod.POST,
 			consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Void> addPublisher(@RequestBody Publisher publisher) {
-		try {
-			Integer publisherId = publisherService.savePublisher(publisher);
-			// Connection class not found
-			if (publisherId == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(publisherId)
-                    .toUri();
-			return ResponseEntity.created(location).build();
-		} catch (SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
-		}
+		Publisher savedPublisher = publisherService.savePublisher(publisher);
+	
+		URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedPublisher.getPublisherId())
+                .toUri();
+		
+		return ResponseEntity.created(location).build();
+		
 	}
 	
 	// READ PUBLISHER BY ID
 	@RequestMapping(path = "/lms/publishers/{publisherId}", method=RequestMethod.GET,
 			produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Publisher> getPublisherById(@PathVariable Integer publisherId)  {
-		try {
-			List<Publisher> publishers = publisherService.getPublisherById(publisherId);
-			// Connection class not found
-			if (publishers == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			// No publisher with this Id
-			if (publishers.size() == 0) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			return new ResponseEntity<Publisher>(publishers.get(0), HttpStatus.OK);
-		} catch (SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+		Result<Publisher> rs = publisherService.getPublisherById(publisherId);
+		if (!rs.getIsSuccess()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+		return new ResponseEntity<Publisher>(rs.getResult(), HttpStatus.OK);
 	}
 	
 	// READ PUBLISHERS
 	@RequestMapping(path = "/lms/publishers", method=RequestMethod.GET,
 			produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<List<Publisher>> getPublishers() {
-		try {
-			List<Publisher> publishers = publisherService.readPublishers();
-			// Connection class not found
-			if (publishers == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			return new ResponseEntity<List<Publisher>>(publishers, HttpStatus.OK);
-		} catch (SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
-		}
+		List<Publisher> publishers = publisherService.readPublishers();
+		return new ResponseEntity<List<Publisher>>(publishers, HttpStatus.OK);
 	}
 	
 	// UPDATE PUBLISHER
 	@RequestMapping(path="/lms/publishers/{publisherId}", method=RequestMethod.PUT,
 			consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<Void> updatePublisher(@RequestBody Publisher publisher, @PathVariable Integer publisherId) {
-		try {
-			publisher.setPublisherId(publisherId);
-			Boolean exists = publisherService.updatePublisher(publisher);
-			// Connection class not found
-			if (exists == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			// No publisher with this Id
-			if (!exists) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} catch (SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+		publisher.setPublisherId(publisherId);
+		Result<Void> rs = publisherService.updatePublisher(publisher);
+		if (!rs.getIsSuccess()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
 	// DELETE PUBLISHER
 	@RequestMapping(path = "/lms/publishers/{publisherId}", method=RequestMethod.DELETE)
 	public ResponseEntity<Publisher> deleteAuthor(@PathVariable Integer publisherId) {
-		try {
-			Boolean exists = publisherService.deletePublisher(publisherId);
-			// Connection class not found
-			if (exists == null) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			// No publisher with this Id
-			if (!exists) {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} catch (SQLException e) {
-			return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
+		Result<Void> rs = publisherService.deletePublisher(publisherId);
+		if (!rs.getIsSuccess()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

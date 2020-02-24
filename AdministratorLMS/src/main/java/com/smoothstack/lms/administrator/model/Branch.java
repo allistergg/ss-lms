@@ -2,11 +2,28 @@ package com.smoothstack.lms.administrator.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "tbl_library_branch")
 public class Branch implements Serializable {
 	
 	private static final long serialVersionUID = 1280765973528383816L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "branchid")
 	private Integer branchId;
+	
+	@Column(name = "branchname")
 	private String branchName;
+	
+	@Column(name = "branchaddress")
 	private String branchAddress;
 	
 	public Integer getBranchId() {
@@ -62,9 +79,5 @@ public class Branch implements Serializable {
 			return false;
 		return true;
 	}
-	@Override
-	public String toString() {
-		return "Branch [branchId=" + branchId + ", branchName=" + branchName + ", branchAddress=" + branchAddress + "]";
-	}
-
+	
 }

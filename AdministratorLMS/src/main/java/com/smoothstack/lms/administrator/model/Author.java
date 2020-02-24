@@ -3,12 +3,34 @@ package com.smoothstack.lms.administrator.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@Entity
+@Table(name = "tbl_author")
 public class Author implements Serializable {
 	
 	private static final long serialVersionUID = 3540691048065925162L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "authorid")
 	private Integer authorId;
+	
+	@Column(name = "authorname")
 	private String authorName;
-	private List<Book> books; 
+	
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "authors")
+	@JsonIgnoreProperties("authors")
+	private List<Book> books;
 	
 	public Integer getAuthorId() {
 		return authorId;
@@ -63,9 +85,6 @@ public class Author implements Serializable {
 			return false;
 		return true;
 	}
-	@Override
-	public String toString() {
-		return "Author [authorId=" + authorId + ", authorName=" + authorName + ", books=" + books + "]";
-	}
-
+	
+	
 }

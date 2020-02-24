@@ -3,13 +3,35 @@ package com.smoothstack.lms.administrator.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@Entity
+@Table(name = "tbl_genre")
 public class Genre implements Serializable {
-	
-	private static final long serialVersionUID = -7816443721846069003L;
+
+	private static final long serialVersionUID = -4748656159066119636L;
+
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "genre_id")
 	private Integer genreId;
-	private String genreName;
-	private List<Book> books;
 	
+	@Column(name = "genre_name")
+	private String genreName;
+	
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "genres")
+	@JsonIgnoreProperties("genres")
+	private List<Book> books;
+
 	public Integer getGenreId() {
 		return genreId;
 	}
@@ -62,10 +84,6 @@ public class Genre implements Serializable {
 		} else if (!genreName.equals(other.genreName))
 			return false;
 		return true;
-	}
-	@Override
-	public String toString() {
-		return "Genre [genreId=" + genreId + ", genreName=" + genreName + ", books=" + books + "]";
 	}
 	
 }

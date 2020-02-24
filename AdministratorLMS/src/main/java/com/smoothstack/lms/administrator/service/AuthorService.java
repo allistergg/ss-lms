@@ -1,7 +1,5 @@
 package com.smoothstack.lms.administrator.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,59 +12,53 @@ import com.smoothstack.lms.administrator.model.Author;
 public class AuthorService {
 	
 	@Autowired
-	private ConnectionUtil connUtil;
-	@Autowired
 	private AuthorDAO adao;
 	
 	// CREATE AUTHOR
-	public Integer saveAuthor(Author author) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Integer authorId = adao.addAuthorReturnPK(conn, author);
-			conn.commit();
-			return authorId;		
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Author saveAuthor(Author author) {
+		return adao.save(author);
 	}
 	
 	// READ AUTHOR BY ID
-	public List<Author> getAuthorById(Integer authorId) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			return adao.readAuthorById(conn, authorId);
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Author> getAuthorById(Integer authorId) {
+		Result<Author> rs = new Result<Author>();
+		if (adao.existsById(authorId)) {
+			rs.setResult(adao.findById(authorId).get());
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}
 		
 	// READ AUTHORS
-	public List<Author> readAuthors() throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			return adao.readAuthors(conn);
-		}	catch (ClassNotFoundException e) {
-			return null;
-		}
+	public List<Author> readAuthors() {
+		return adao.findAll();
 	}
 	
 	// UPDATE AUTHOR
-	public Boolean updateAuthor(Author author) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Boolean exists = adao.updateAuthor(conn, author);
-			conn.commit();
-			return exists;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Void> updateAuthor(Author author) {
+		// Need to make sure the author exists in DB or a new author will be created
+		Result<Void> rs = new Result<Void>();
+		if (adao.existsById(author.getAuthorId())) {
+			adao.save(author);
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}
 	
 	// DELETE AUTHOR
-	public Boolean deleteAuthor(Integer authorId) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Boolean exists = adao.deleteAuthor(conn, authorId);
-			conn.commit();
-			return exists;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Void> deleteAuthor(Integer authorId) {
+		Result<Void> rs = new Result<Void>();
+		if (adao.existsById(authorId)) {
+			adao.deleteById(authorId);
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}
 
 }

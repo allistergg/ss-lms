@@ -3,15 +3,54 @@ package com.smoothstack.lms.administrator.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@Entity
+@Table(name = "tbl_book")
 public class Book implements Serializable {
 	
 	private static final long serialVersionUID = 8433731159129230918L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "bookid")
 	private Integer bookId;
+	
+	@Column(name = "title")
 	private String title;
+	
+	@ManyToOne
+    @JoinColumn(name="pubid", nullable=false)
+	@JsonIgnoreProperties("books")
 	private Publisher publisher;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "tbl_book_authors", joinColumns = {
+			@JoinColumn(name = "bookid", nullable = false, updatable = false) },
+			inverseJoinColumns = { @JoinColumn(name = "authorid",
+			nullable = false, updatable = false) })
+	@JsonIgnoreProperties("books")
 	private List<Author> authors;
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "tbl_book_genres", joinColumns = {
+			@JoinColumn(name = "bookid", nullable = false, updatable = false) },
+			inverseJoinColumns = { @JoinColumn(name = "genre_id",
+			nullable = false, updatable = false) })
+	@JsonIgnoreProperties("books")
 	private List<Genre> genres;
-	private List<Copies> copies;
 	
 	public Integer getBookId() {
 		return bookId;
@@ -25,12 +64,6 @@ public class Book implements Serializable {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public Publisher getPublisher() {
-		return publisher;
-	}
-	public void setPublisher(Publisher publisher) {
-		this.publisher = publisher;
-	}
 	public List<Author> getAuthors() {
 		return authors;
 	}
@@ -43,11 +76,11 @@ public class Book implements Serializable {
 	public void setGenres(List<Genre> genres) {
 		this.genres = genres;
 	}
-	public List<Copies> getCopies() {
-		return copies;
+	public Publisher getPublisher() {
+		return publisher;
 	}
-	public void setCopies(List<Copies> copies) {
-		this.copies = copies;
+	public void setPublisher(Publisher publisher) {
+		this.publisher = publisher;
 	}
 	@Override
 	public int hashCode() {
@@ -55,7 +88,6 @@ public class Book implements Serializable {
 		int result = 1;
 		result = prime * result + ((authors == null) ? 0 : authors.hashCode());
 		result = prime * result + ((bookId == null) ? 0 : bookId.hashCode());
-		result = prime * result + ((copies == null) ? 0 : copies.hashCode());
 		result = prime * result + ((genres == null) ? 0 : genres.hashCode());
 		result = prime * result + ((publisher == null) ? 0 : publisher.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
@@ -80,11 +112,6 @@ public class Book implements Serializable {
 				return false;
 		} else if (!bookId.equals(other.bookId))
 			return false;
-		if (copies == null) {
-			if (other.copies != null)
-				return false;
-		} else if (!copies.equals(other.copies))
-			return false;
 		if (genres == null) {
 			if (other.genres != null)
 				return false;
@@ -101,11 +128,6 @@ public class Book implements Serializable {
 		} else if (!title.equals(other.title))
 			return false;
 		return true;
-	}
-	@Override
-	public String toString() {
-		return "Book [bookId=" + bookId + ", title=" + title + ", publisher=" + publisher + ", authors=" + authors
-				+ ", genres=" + genres + ", copies=" + copies + "]";
 	}
 	
 }

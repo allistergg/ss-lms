@@ -1,17 +1,34 @@
 package com.smoothstack.lms.administrator.model;
 
 import java.io.Serializable;
-import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "tbl_borrower")
 public class Borrower implements Serializable {
 	
 	private static final long serialVersionUID = 4543830888442808309L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "cardno")
 	private Integer cardNo;
+	
+	@Column(name = "name")
 	private String borrowerName;
+	
+	@Column(name = "address")
 	private String borrowerAddress;
+	
+	@Column(name = "phone")
 	private String borrowerPhone;
-	private List<Loan> loans;
- 	
+
 	public Integer getCardNo() {
 		return cardNo;
 	}
@@ -36,12 +53,6 @@ public class Borrower implements Serializable {
 	public void setBorrowerPhone(String borrowerPhone) {
 		this.borrowerPhone = borrowerPhone;
 	}
-	public List<Loan> getLoans() {
-		return loans;
-	}
-	public void setLoans(List<Loan> loans) {
-		this.loans = loans;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -50,7 +61,6 @@ public class Borrower implements Serializable {
 		result = prime * result + ((borrowerName == null) ? 0 : borrowerName.hashCode());
 		result = prime * result + ((borrowerPhone == null) ? 0 : borrowerPhone.hashCode());
 		result = prime * result + ((cardNo == null) ? 0 : cardNo.hashCode());
-		result = prime * result + ((loans == null) ? 0 : loans.hashCode());
 		return result;
 	}
 	@Override
@@ -82,17 +92,7 @@ public class Borrower implements Serializable {
 				return false;
 		} else if (!cardNo.equals(other.cardNo))
 			return false;
-		if (loans == null) {
-			if (other.loans != null)
-				return false;
-		} else if (!loans.equals(other.loans))
-			return false;
 		return true;
-	}
-	@Override
-	public String toString() {
-		return "Borrower [cardNo=" + cardNo + ", borrowerName=" + borrowerName + ", borrowerAddress=" + borrowerAddress
-				+ ", borrowerPhone=" + borrowerPhone + ", loans=" + loans + "]";
 	}
 	
 }

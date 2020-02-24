@@ -1,7 +1,5 @@
 package com.smoothstack.lms.administrator.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,59 +12,53 @@ import com.smoothstack.lms.administrator.model.Genre;
 public class GenreService {
 	
 	@Autowired
-	private ConnectionUtil connUtil;
-	@Autowired
 	private GenreDAO gdao;
 	
 	// CREATE GENRE
-	public Integer saveGenre(Genre genre) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Integer genreId = gdao.addGenre(conn, genre);
-			conn.commit();
-			return genreId;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Genre saveGenre(Genre genre) {
+		return gdao.save(genre);
 	}
 	
 	// READ GENRE BY ID
-	public List<Genre> getGenreById(int genreId) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			return gdao.readGenreById(conn, genreId);
-		} catch (ClassNotFoundException e) {
-			return null;
+	public Result<Genre> getGenreById(int genreId) {
+		Result<Genre> rs = new Result<Genre>();
+		if (gdao.existsById(genreId)) {
+			rs.setResult(gdao.findById(genreId).get());
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
 		}
+		return rs;
 	}
 	
 	// READ GENRES
-	public List<Genre> readGenres() throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			return gdao.readGenres(conn);
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public List<Genre> readGenres() {
+		return gdao.findAll();
 	}
 	
 	// UPDATE GENRE
-	public Boolean updateGenre(Genre genre) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Boolean exists = gdao.updateGenre(conn, genre);
-			conn.commit();
-			return exists;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Void> updateGenre(Genre genre) {
+		Result<Void> rs = new Result<Void>();
+		// Don't want to create a new genre
+		if (gdao.existsById(genre.getGenreId())) {
+			gdao.save(genre);
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}
 	
 	// DELETE GENRE
-	public Boolean deleteGenre(Integer genreId) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Boolean exists = gdao.deleteGenre(conn, genreId);
-			conn.commit();
-			return exists;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Void> deleteGenre(Integer genreId) {
+		Result<Void> rs = new Result<Void>();
+		if (gdao.existsById(genreId)) {
+			gdao.deleteById(genreId);
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}
 
 }

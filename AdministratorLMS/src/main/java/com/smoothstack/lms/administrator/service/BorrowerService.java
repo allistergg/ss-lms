@@ -1,7 +1,5 @@
 package com.smoothstack.lms.administrator.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,59 +12,52 @@ import com.smoothstack.lms.administrator.model.Borrower;
 public class BorrowerService {
 	
 	@Autowired
-	private ConnectionUtil connUtil;
-	@Autowired
-	private BorrowerDAO bodao;
+	BorrowerDAO bodao;
 	
 	// CREATE BORROWER
-	public Integer saveBorrower(Borrower borrower) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Integer cardNo = bodao.addBorrower(conn, borrower);
-			conn.commit();
-			return cardNo;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Borrower saveBorrower(Borrower borrower) {
+		return bodao.save(borrower);
 	}
 	
 	// READ BORROWER BY CARD NO
-	public List<Borrower> getBorrowerByCardNo(Integer cardNo) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			return bodao.readBorrowerCardNo(conn, cardNo);
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Borrower> getBorrowerByCardNo(Integer cardNo) {
+		Result<Borrower> rs = new Result<Borrower>();
+		if (bodao.existsById(cardNo)) {
+			rs.setResult(bodao.findById(cardNo).get());
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}	
 	
 	// READ BORROWERS
-	public List<Borrower> readBorrowers() throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			return bodao.readBorrowers(conn);
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public List<Borrower> readBorrowers() {
+		return bodao.findAll();
 	}
 	
 	// UPDATE BORROWER
-	public Boolean updateBorrower(Borrower borrower) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Boolean exists = bodao.updateBorrower(conn, borrower);
-			conn.commit();
-			return exists;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Void> updateBorrower(Borrower borrower) {
+		Result<Void> rs = new Result<Void>();
+		if (bodao.existsById(borrower.getCardNo())) {
+			bodao.save(borrower);
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}
 	
 	// DELETE BORROWER
-	public Boolean deleteBorrower(Integer cardNo) throws SQLException {
-		try (Connection conn = connUtil.getConnection()) {
-			Boolean exists = bodao.deleteBorrower(conn, cardNo);
-			conn.commit();
-			return exists;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} 
+	public Result<Void> deleteBorrower(Integer cardNo) {
+		Result<Void> rs = new Result<Void>();
+		if (bodao.existsById(cardNo)) {
+			bodao.deleteById(cardNo);
+			rs.setIsSuccess(true);
+		} else {
+			rs.setIsSuccess(false);
+		}
+		return rs;
 	}
 
 }

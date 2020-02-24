@@ -2,15 +2,40 @@ package com.smoothstack.lms.administrator.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@Entity
+@Table(name = "tbl_publisher")
 public class Publisher implements Serializable {
 	
 	private static final long serialVersionUID = -159063459898671714L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "publisherid")
 	private Integer publisherId;
+	
+	@Column(name = "publishername")
 	private String publisherName;
+	
+	@Column(name = "publisheraddress")
 	private String publisherAddress;
+	
+	@Column(name = "publisherphone")
 	private String publisherPhone;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "publisher")
+	@JsonIgnoreProperties("publisher")
 	private List<Book> books;
 	
 	public Integer getPublisherId() {
@@ -45,7 +70,14 @@ public class Publisher implements Serializable {
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(books, publisherAddress, publisherId, publisherName, publisherPhone);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((books == null) ? 0 : books.hashCode());
+		result = prime * result + ((publisherAddress == null) ? 0 : publisherAddress.hashCode());
+		result = prime * result + ((publisherId == null) ? 0 : publisherId.hashCode());
+		result = prime * result + ((publisherName == null) ? 0 : publisherName.hashCode());
+		result = prime * result + ((publisherPhone == null) ? 0 : publisherPhone.hashCode());
+		return result;
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -56,18 +88,32 @@ public class Publisher implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Publisher other = (Publisher) obj;
-		return Objects.equals(books, other.books) && Objects.equals(publisherAddress, other.publisherAddress)
-				&& Objects.equals(publisherId, other.publisherId) && Objects.equals(publisherName, other.publisherName)
-				&& Objects.equals(publisherPhone, other.publisherPhone);
+		if (books == null) {
+			if (other.books != null)
+				return false;
+		} else if (!books.equals(other.books))
+			return false;
+		if (publisherAddress == null) {
+			if (other.publisherAddress != null)
+				return false;
+		} else if (!publisherAddress.equals(other.publisherAddress))
+			return false;
+		if (publisherId == null) {
+			if (other.publisherId != null)
+				return false;
+		} else if (!publisherId.equals(other.publisherId))
+			return false;
+		if (publisherName == null) {
+			if (other.publisherName != null)
+				return false;
+		} else if (!publisherName.equals(other.publisherName))
+			return false;
+		if (publisherPhone == null) {
+			if (other.publisherPhone != null)
+				return false;
+		} else if (!publisherPhone.equals(other.publisherPhone))
+			return false;
+		return true;
 	}
-	@Override
-	public String toString() {
-		return "Publisher [publisherId=" + publisherId + ", publisherName=" + publisherName + ", publisherAddress="
-				+ publisherAddress + ", publisherPhone=" + publisherPhone + ", books=" + books + "]";
-	}
-	
-	
-	
-	
 	
 }

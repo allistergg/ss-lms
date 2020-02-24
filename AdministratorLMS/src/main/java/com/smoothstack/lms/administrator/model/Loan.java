@@ -3,34 +3,49 @@ package com.smoothstack.lms.administrator.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@Entity
+@Table(name = "tbl_book_loans")
 public class Loan implements Serializable {
 	
 	private static final long serialVersionUID = 5460221989751241343L;
-	private Book book;
-	private Branch branch;
-	private Borrower borrower;
+	
+	@EmbeddedId
+	private LoansIdentity loansIdentity;
+	
+	@Column(name = "dateout")
 	private LocalDate dateOut;
+	
+	@Column(name = "duedate")
 	private LocalDate dateDue;
+	
+	@Column(name = "datein")
 	private LocalDate dateIn;
 	
-	public Book getBook() {
-		return book;
-	}
-	public void setBook(Book book) {
-		this.book = book;
-	}
-	public Branch getBranch() {
-		return branch;
-	}
-	public void setBranch(Branch branch) {
-		this.branch = branch;
-	}
-	public Borrower getBorrower() {
-		return borrower;
-	}
-	public void setBorrower(Borrower borrower) {
-		this.borrower = borrower;
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="cardno", insertable = false, updatable = false)
+	@JsonIgnoreProperties("loans")
+	private Borrower borrower;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="branchid", insertable = false, updatable = false)
+	@JsonIgnoreProperties("loans")
+	private Branch branch;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="bookid", insertable = false, updatable = false)
+	@JsonIgnoreProperties("loans")
+	private Book book;
+	
 	public LocalDate getDateOut() {
 		return dateOut;
 	}
@@ -49,6 +64,30 @@ public class Loan implements Serializable {
 	public void setDateIn(LocalDate dateIn) {
 		this.dateIn = dateIn;
 	}
+	public LoansIdentity getLoansIdentity() {
+		return loansIdentity;
+	}
+	public void setLoansIdentity(LoansIdentity loansIdentity) {
+		this.loansIdentity = loansIdentity;
+	}
+	public Borrower getBorrower() {
+		return borrower;
+	}
+	public void setBorrower(Borrower borrower) {
+		this.borrower = borrower;
+	}
+	public Branch getBranch() {
+		return branch;
+	}
+	public void setBranch(Branch branch) {
+		this.branch = branch;
+	}
+	public Book getBook() {
+		return book;
+	}
+	public void setBook(Book book) {
+		this.book = book;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -59,6 +98,7 @@ public class Loan implements Serializable {
 		result = prime * result + ((dateDue == null) ? 0 : dateDue.hashCode());
 		result = prime * result + ((dateIn == null) ? 0 : dateIn.hashCode());
 		result = prime * result + ((dateOut == null) ? 0 : dateOut.hashCode());
+		result = prime * result + ((loansIdentity == null) ? 0 : loansIdentity.hashCode());
 		return result;
 	}
 	@Override
@@ -100,12 +140,12 @@ public class Loan implements Serializable {
 				return false;
 		} else if (!dateOut.equals(other.dateOut))
 			return false;
+		if (loansIdentity == null) {
+			if (other.loansIdentity != null)
+				return false;
+		} else if (!loansIdentity.equals(other.loansIdentity))
+			return false;
 		return true;
 	}
-	@Override
-	public String toString() {
-		return "Loan [book=" + book + ", branch=" + branch + ", borrower=" + borrower + ", dateOut=" + dateOut
-				+ ", dateDue=" + dateDue + ", dateIn=" + dateIn + "]";
-	}
-
+	
 }
