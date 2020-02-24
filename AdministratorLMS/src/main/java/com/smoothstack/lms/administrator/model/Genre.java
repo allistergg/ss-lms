@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_genre")
+@JsonIgnoreProperties("hibernateLazyInitializer")
 public class Genre implements Serializable {
 
 	private static final long serialVersionUID = -4748656159066119636L;
@@ -29,7 +30,7 @@ public class Genre implements Serializable {
 	private String genreName;
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "genres")
-	@JsonIgnoreProperties("genres")
+	@JsonIgnoreProperties({"genres","authors","genres","copies"})
 	private List<Book> books;
 
 	public Integer getGenreId() {

@@ -13,12 +13,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_book")
+@JsonIgnoreProperties("hibernateLazyInitializer")
 public class Book implements Serializable {
 	
 	private static final long serialVersionUID = 8433731159129230918L;
@@ -52,6 +54,10 @@ public class Book implements Serializable {
 	@JsonIgnoreProperties("books")
 	private List<Genre> genres;
 	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "copiesIdentity.bookId")
+	@JsonIgnoreProperties("book")
+	private List<Copies> copies;
+	
 	public Integer getBookId() {
 		return bookId;
 	}
@@ -82,12 +88,19 @@ public class Book implements Serializable {
 	public void setPublisher(Publisher publisher) {
 		this.publisher = publisher;
 	}
+	public List<Copies> getCopies() {
+		return copies;
+	}
+	public void setCopies(List<Copies> copies) {
+		this.copies = copies;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((authors == null) ? 0 : authors.hashCode());
 		result = prime * result + ((bookId == null) ? 0 : bookId.hashCode());
+		result = prime * result + ((copies == null) ? 0 : copies.hashCode());
 		result = prime * result + ((genres == null) ? 0 : genres.hashCode());
 		result = prime * result + ((publisher == null) ? 0 : publisher.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
@@ -111,6 +124,11 @@ public class Book implements Serializable {
 			if (other.bookId != null)
 				return false;
 		} else if (!bookId.equals(other.bookId))
+			return false;
+		if (copies == null) {
+			if (other.copies != null)
+				return false;
+		} else if (!copies.equals(other.copies))
 			return false;
 		if (genres == null) {
 			if (other.genres != null)

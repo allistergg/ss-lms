@@ -19,6 +19,10 @@ public class LoansIdentity implements Serializable {
 	@Column(name = "cardno")
 	private Integer cardNo;
 	
+	public LoansIdentity() {
+		
+	}
+	
 	public LoansIdentity(Integer bookId, Integer branchId, Integer cardNo) {
 		this.bookId = bookId;
 		this.branchId = branchId;

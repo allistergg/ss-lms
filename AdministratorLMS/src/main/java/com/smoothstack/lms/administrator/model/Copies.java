@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_book_copies")
+@JsonIgnoreProperties("hibernateLazyInitializer")
 public class Copies implements Serializable {
 
 	private static final long serialVersionUID = -6189964190586714218L;
@@ -33,10 +34,7 @@ public class Copies implements Serializable {
 	@JoinColumn(name="branchid", insertable = false, updatable = false)
 	@JsonIgnoreProperties("copies")
 	private Branch branch;
-	
-	public CopiesIdentity getCopiesIdentity() {
-		return copiesIdentity;
-	}
+
 	public void setCopiesIdentity(CopiesIdentity copiesIdentity) {
 		this.copiesIdentity = copiesIdentity;
 	}

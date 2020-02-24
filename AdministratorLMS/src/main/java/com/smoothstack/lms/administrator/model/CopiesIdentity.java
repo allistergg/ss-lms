@@ -16,6 +16,10 @@ public class CopiesIdentity implements Serializable {
 	@Column(name = "branchid")
 	private Integer branchId;
 	
+	public CopiesIdentity() {
+		
+	}
+	
 	public CopiesIdentity(Integer bookId, Integer branchId, Integer noOfCopies) {
 		this.bookId = bookId;
 		this.branchId = branchId;

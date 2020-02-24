@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_book_loans")
+@JsonIgnoreProperties("hibernateLazyInitializer")
 public class Loan implements Serializable {
 	
 	private static final long serialVersionUID = 5460221989751241343L;
@@ -43,7 +44,7 @@ public class Loan implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="bookid", insertable = false, updatable = false)
-	@JsonIgnoreProperties("loans")
+	@JsonIgnoreProperties({"loans", "publisher", "authors", "genres", "copies"})
 	private Book book;
 	
 	public LocalDate getDateOut() {
@@ -63,9 +64,6 @@ public class Loan implements Serializable {
 	}
 	public void setDateIn(LocalDate dateIn) {
 		this.dateIn = dateIn;
-	}
-	public LoansIdentity getLoansIdentity() {
-		return loansIdentity;
 	}
 	public void setLoansIdentity(LoansIdentity loansIdentity) {
 		this.loansIdentity = loansIdentity;

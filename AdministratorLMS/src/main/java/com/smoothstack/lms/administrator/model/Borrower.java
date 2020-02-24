@@ -1,16 +1,22 @@
 package com.smoothstack.lms.administrator.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_borrower")
+@JsonIgnoreProperties("hibernateLazyInitializer")
 public class Borrower implements Serializable {
 	
 	private static final long serialVersionUID = 4543830888442808309L;
@@ -28,6 +34,10 @@ public class Borrower implements Serializable {
 	
 	@Column(name = "phone")
 	private String borrowerPhone;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "loansIdentity.cardNo")
+	@JsonIgnoreProperties("borrower")
+	private List<Loan> loans;
 
 	public Integer getCardNo() {
 		return cardNo;
@@ -53,6 +63,12 @@ public class Borrower implements Serializable {
 	public void setBorrowerPhone(String borrowerPhone) {
 		this.borrowerPhone = borrowerPhone;
 	}
+	public List<Loan> getLoans() {
+		return loans;
+	}
+	public void setLoans(List<Loan> loans) {
+		this.loans = loans;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -61,6 +77,7 @@ public class Borrower implements Serializable {
 		result = prime * result + ((borrowerName == null) ? 0 : borrowerName.hashCode());
 		result = prime * result + ((borrowerPhone == null) ? 0 : borrowerPhone.hashCode());
 		result = prime * result + ((cardNo == null) ? 0 : cardNo.hashCode());
+		result = prime * result + ((loans == null) ? 0 : loans.hashCode());
 		return result;
 	}
 	@Override
@@ -91,6 +108,11 @@ public class Borrower implements Serializable {
 			if (other.cardNo != null)
 				return false;
 		} else if (!cardNo.equals(other.cardNo))
+			return false;
+		if (loans == null) {
+			if (other.loans != null)
+				return false;
+		} else if (!loans.equals(other.loans))
 			return false;
 		return true;
 	}

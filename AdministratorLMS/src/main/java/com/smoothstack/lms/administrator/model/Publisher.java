@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_publisher")
+@JsonIgnoreProperties("hibernateLazyInitializer")
 public class Publisher implements Serializable {
 	
 	private static final long serialVersionUID = -159063459898671714L;
@@ -35,7 +36,7 @@ public class Publisher implements Serializable {
 	private String publisherPhone;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "publisher")
-	@JsonIgnoreProperties("publisher")
+	@JsonIgnoreProperties({"publisher","authors","genres","copies"})
 	private List<Book> books;
 	
 	public Integer getPublisherId() {
