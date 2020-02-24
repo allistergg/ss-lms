@@ -24,7 +24,7 @@ public class AdminBookController extends AdminController<Book> {
 	@Autowired
 	RestTemplate restTemplate;
 	
-	private String ADMIN_BOOK_URI = "http://localhost:8080/lms/books/";
+	private String ADMIN_BOOK_URI = "http://admin-service/lms/books/";
 
 	@Override
 	public ResponseEntity<Book[]> getAll() {

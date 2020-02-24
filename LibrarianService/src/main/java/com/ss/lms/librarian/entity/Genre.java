@@ -1,50 +1,79 @@
 package com.ss.lms.librarian.entity;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-public class Genre {
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-        private Integer genreId;
-        private String genreName;
-        private List<Book> books;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    public Integer getGenreId() {
-        return genreId;
-    }
+@Entity
+@Table(name = "tbl_genre")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "books"})
+public class Genre implements Serializable{
 
-    public void setGenreId(Integer genreId) {
-        this.genreId = genreId;
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6203033775108013577L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer genreId;
+	private String genreName;
+	@ManyToMany(mappedBy="genres", fetch = FetchType.LAZY)
+	private Set<Book> books;
 
-    public String getGenreName() {
-        return genreName;
-    }
+	public Integer getGenreId() {
+		return genreId;
+	}
 
-    public void setGenreName(String genreName) {
-        this.genreName = genreName;
-    }
+	public void setGenreId(Integer genreId) {
+		this.genreId = genreId;
+	}
 
-    public List<Book> getBooks() {
-        return books;
-    }
+	public String getGenreName() {
+		return genreName;
+	}
 
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
+	public void setGenreName(String genreName) {
+		this.genreName = genreName;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Genre genre = (Genre) o;
-        return getGenreId().equals(genre.getGenreId()) &&
-                Objects.equals(getGenreName(), genre.getGenreName()) &&
-                Objects.equals(getBooks(), genre.getBooks());
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getGenreId(), getGenreName(), getBooks());
-    }
+	
+	public Set<Book> getBooks() {
+		return books;
+	}
+
+	public void setBooks(Set<Book> books) {
+		this.books = books;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Genre genre = (Genre) o;
+		return getGenreId().equals(genre.getGenreId()) && Objects.equals(getGenreName(), genre.getGenreName())
+				&& Objects.equals(getBooks(), genre.getBooks());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getGenreId(), getGenreName(), getBooks());
+	}
 }

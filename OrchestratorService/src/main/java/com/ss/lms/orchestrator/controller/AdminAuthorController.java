@@ -14,7 +14,7 @@ import com.ss.lms.orchestrator.entity.Author;
 @RequestMapping("/admin/author")
 public class AdminAuthorController extends AdminController<Author> {
 	
-	String ADMIN_AUTHOR_URI = "http://localhost:8080/lms/authors/";
+	String ADMIN_AUTHOR_URI = "http://admin-service/lms/authors/";
 
 	@Override
 	public ResponseEntity<Author[]> getAll() {

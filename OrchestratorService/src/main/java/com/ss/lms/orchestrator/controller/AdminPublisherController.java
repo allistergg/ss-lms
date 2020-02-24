@@ -19,7 +19,7 @@ public class AdminPublisherController extends AdminController<Publisher> {
 	@Autowired
 	RestTemplate restTemplate;
 	
-	private String ADMIN_PUBLISHER_URI = "http://localhost:8080/lms/publishers/";
+	private String ADMIN_PUBLISHER_URI = "http://admin-service/lms/publishers/";
 
 	@Override
 	public ResponseEntity<Publisher[]> getAll() {

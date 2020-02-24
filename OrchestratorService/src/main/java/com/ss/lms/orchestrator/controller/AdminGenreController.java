@@ -16,7 +16,7 @@ import com.ss.lms.orchestrator.entity.Genre;
 @RequestMapping("/admin/genre")
 public class AdminGenreController extends AdminController<Genre>{
 	
-	private String ADMIN_GENRE_URI = "http://localhost:8080/lms/genres/";
+	private String ADMIN_GENRE_URI = "http://admin-service/lms/genres/";
 	
 	@Autowired
 	RestTemplate restTemplate;
