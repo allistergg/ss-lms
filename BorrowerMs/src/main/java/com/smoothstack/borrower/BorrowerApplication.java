@@ -4,11 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-
-public class BorrowerMsApplication {
+public class BorrowerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BorrowerMsApplication.class, args);
+		SpringApplication.run(BorrowerApplication.class, args);
 	}
 
 }

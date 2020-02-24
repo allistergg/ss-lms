@@ -1,108 +1,151 @@
 package com.smoothstack.borrower.daos;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.smoothstack.borrower.domain.Book;
+import com.smoothstack.borrower.domain.Branch;
+import com.smoothstack.borrower.domain.Loans;
 import com.smoothstack.borrower.exceptions.InvalidBookIdException;
 import com.smoothstack.borrower.exceptions.InvalidBranchIdException;
 import com.smoothstack.borrower.exceptions.InvalidCardNumberException;
-import com.smoothstack.borrower.services.ConnectionUtil;
 
 @Component
+@Transactional
 public class BorrowerDAO {
 	private static final Logger log = LoggerFactory.getLogger(BorrowerDAO.class);
+	private EntityManager entityManager;
 
-	public boolean checkOut(Integer branchId, Integer bookId, Integer cardNo)
-			throws SQLException, ClassNotFoundException, InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+	public BorrowerDAO(EntityManager theEntityManager) {
+		entityManager = theEntityManager;
+	}
 
-		Date dateOut = new java.sql.Timestamp(new Date().getTime());
+	public String checkOut(Integer branchId, Integer bookId, Integer cardNo)
+
+			throws NoResultException, InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException {
+
+		Timestamp dateOut = new java.sql.Timestamp(new Date().getTime());
 
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, +7);
-		Date dueDate = new java.sql.Timestamp(cal.getTime().getTime());
+		Timestamp dueDate = new java.sql.Timestamp(cal.getTime().getTime());
+		String bookTitle = "";
+		try {
+			setForeignKeyChecks(0);
+			if (!isCardNumberValid(cardNo)) {
+				throw new InvalidCardNumberException();
+			}
+
+			if (!isBookIdValid(bookId)) {
+				throw new InvalidBookIdException();
+			}
+			if (!isBranchIdValid(branchId)) {
+				throw new InvalidBranchIdException();
+			}
+
+			String hsql = " INSERT INTO tbl_book_loans (bookId, branchId, cardNo, dateOut, dueDate) VALUES(" + bookId
+					+ ", " + branchId + ", " + cardNo + ", '" + dateOut + "', '" + dueDate + "')";
+			log.info(hsql);
+
+			Query query = entityManager.createNativeQuery(hsql);
+			entityManager.flush();
+			int result = query.executeUpdate();
+			entityManager.clear();
+
+			log.info("results = " + result);
+
+			setForeignKeyChecks(1);
+
+			if (result >= 1) {
+				bookTitle = getBookTitle(bookId);
+			}
+
+		} catch (NoResultException nre) {
+			log.error("Failed to check out due to " + nre.getMessage());
+			throw nre;
+		}
+		return bookTitle;
+	}
+
+	public Loans returnBook(Integer bookId, Integer cardNo)
+			throws NoResultException, InvalidCardNumberException, InvalidBookIdException {
+
+		Loans loans = null;
+		Timestamp dateIn = new java.sql.Timestamp(new Date().getTime());
+
 		if (!isCardNumberValid(cardNo)) {
 			throw new InvalidCardNumberException();
 		}
-		Connection connection = ConnectionUtil.getConnection();
-		setForeignKeyChecks(0);
-
-		String sql = "INSERT INTO tbl_book_loans(bookId, branchId, cardNo, dateOut, dueDate) VALUES('" + bookId + "', '"
-				+ branchId + "', '" + cardNo + "', '" + dateOut + "', '" + dueDate + "')";
-		PreparedStatement statement = connection.prepareStatement(sql);
-
-		statement.execute();
-
-		setForeignKeyChecks(1);
-		
-		connection.close();
-		return true;
-		
-	}
-
-	public boolean returnBook(Integer bookId, Integer cardNo)
-			throws ClassNotFoundException, SQLException, InvalidCardNumberException, InvalidBookIdException {
-
-		Date dateIn = new java.sql.Timestamp(new Date().getTime());
-		if (!isCardNumberValid(cardNo)) {
-			throw new InvalidCardNumberException();
+		if (!isBookIdValid(bookId)) {
+			throw new InvalidBookIdException();
 		}
-		Connection connection = ConnectionUtil.getConnection();
+		try {
 
-		String sql = "UPDATE tbl_book_loans SET dateIn ='" + dateIn + "' where cardNo = " + cardNo + " and bookId = "
-				+ bookId;
-		PreparedStatement statement = connection.prepareStatement(sql);
+			String hsql = "UPDATE Loans SET dateIn='" + dateIn + "' where bookId =" + bookId + " and cardNo = "
+					+ cardNo;
+			// log.info(hsql);
+			Query query = entityManager.createQuery(hsql);
+			entityManager.flush();
+			Integer result = query.executeUpdate();
+			entityManager.clear();
 
-		statement.execute();
-		connection.close();
-		return true;
+			loans = (Loans) entityManager.createQuery("SELECT l from Loans l where l.bookId = ?1 and l.cardNo = ?2")
+					.setParameter(1, bookId).setParameter(2, cardNo).getSingleResult();
 
-	}
-
-	private void setForeignKeyChecks(int val) throws ClassNotFoundException, SQLException {
-		Connection connection = ConnectionUtil.getConnection();
-		String sql = "SET FOREIGN_KEY_CHECKS= " + val;
-		PreparedStatement statement = connection.prepareStatement(sql);
-		
-		statement.execute();
-		connection.close();
-	}
-
-	public String getBookTitle(Integer bookId) throws ClassNotFoundException, SQLException {
-		Connection connection = ConnectionUtil.getConnection();
-		String sql = "SELECT title from tbl_book where bookId =" + bookId;
-		PreparedStatement statement = null;
-		String title = "";
-
-		statement = connection.prepareStatement(sql);
-		ResultSet rs = statement.executeQuery();
-
-		while (rs.next()) {
-			title = rs.getString("title");
-
+			// log.info(loans.toString());
+			return loans;
+		} catch (NoResultException nre) {
+			log.error("Failed to check in due to " + nre.getMessage());
+			throw nre;
 		}
-		
-		connection.close();
-		return title;
 	}
 
-	public boolean isCardNumberValid(Integer cardNo) throws SQLException, ClassNotFoundException {
-		Connection connection = ConnectionUtil.getConnection();
-		String sql = "SELECT * from tbl_borrower where cardNo = " + cardNo;
-		PreparedStatement statement = null;
-		String title = "";
+	public String getBookTitle(Integer bookId) {
+		Book book = (Book) entityManager.createQuery("SELECT b from Book b where b.bookId = ?1").setParameter(1, bookId)
+				.getSingleResult();
 
-		statement = connection.prepareStatement(sql);
-		ResultSet rs = statement.executeQuery();
-		connection.close();
-		return rs.next() == false;
+		return book != null ? book.getTitle() : "";
+	}
+
+	public boolean isCardNumberValid(Integer cardNo) {
+
+		Loans loans = (Loans) entityManager.createQuery("SELECT l from Loans l where l.cardNo = ?1")
+				.setParameter(1, cardNo).getSingleResult();
+
+		return loans != null;
 
 	}
+
+	public boolean isBookIdValid(Integer bookId) {
+
+		Book book = (Book) entityManager.createQuery("SELECT b from Book b where b.bookId = ?1").setParameter(1, bookId)
+				.getSingleResult();
+
+		return book != null;
+	}
+
+	public boolean isBranchIdValid(Integer branchId) {
+
+		Branch branch = (Branch) entityManager.createQuery("SELECT br from Branch br where br.branchId = ?1")
+				.setParameter(1, branchId).getSingleResult();
+
+		return branch != null;
+	}
+
+	private void setForeignKeyChecks(int val) {
+
+		entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS= " + val).executeUpdate();
+
+	}
+
 }
