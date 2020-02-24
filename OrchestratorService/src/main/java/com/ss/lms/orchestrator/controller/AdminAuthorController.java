@@ -2,11 +2,13 @@ package com.ss.lms.orchestrator.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.ss.lms.orchestrator.entity.Author;
 
@@ -14,8 +16,11 @@ import com.ss.lms.orchestrator.entity.Author;
 @RequestMapping("/admin/author")
 public class AdminAuthorController extends AdminController<Author> {
 	
-	String ADMIN_AUTHOR_URI = "http://localhost:8080/lms/authors/";
+	private final String ADMIN_AUTHOR_URI = "http://admin-service/lms/authors/";
 
+	@Autowired
+	private RestTemplate restTemplate;
+	
 	@Override
 	public ResponseEntity<Author[]> getAll() {
 		

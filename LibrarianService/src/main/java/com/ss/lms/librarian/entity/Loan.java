@@ -1,16 +1,47 @@
 package com.ss.lms.librarian.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Loan {
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-    private Book book;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@Entity
+@Table(name="tbl_book_loans")
+public class Loan implements Serializable{
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6923200241363934635L;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="bookid", insertable=false, updatable = false)
+	private Book book;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="branchid", insertable=false, updatable=false)
     private Branch branch;
+    @JsonIgnoreProperties("loans")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="cardno", insertable=false, updatable=false)
     private Borrower borrower;
+    @Column(name="datein")
     private LocalDate dateIn;
+    @Column(name="dateout")
     private LocalDate dateOut;
+    @Column(name="duedate")
     private LocalDate dueDate;
+    
+    @EmbeddedId
+    private LoanId loanId;
 
     public Book getBook() {
         return book;

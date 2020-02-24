@@ -1,60 +1,99 @@
 package com.ss.lms.librarian.entity;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Copy {
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-    private Book book;
-    private Branch branch;
-    private Integer noOfCopies;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    public Book getBook() {
-        return book;
-    }
+@Entity
+@Table(name="tbl_book_copies")
+public class Copy implements Serializable{
 
-    public void setBook(Book book) {
-        this.book = book;
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4706183973407504388L;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="bookid", insertable = false, updatable = false)
+	private Book book;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="branchid", insertable = false, updatable = false)
+	@JsonIgnoreProperties({"copies"})
+	private Branch branch;
+	@Column(name="noofcopies")
+	private Integer noOfCopies;
+	@EmbeddedId
+	private CopyId copyId;
+	
 
-    public Branch getBranch() {
-        return branch;
-    }
+	public Book getBook() {
+		return book;
+	}
 
-    public void setBranch(Branch branch) {
-        this.branch = branch;
-    }
+	public void setBook(Book book) {
+		this.book = book;
+	}
 
-    public Integer getNoOfCopies() {
-        return noOfCopies;
-    }
+	public Branch getBranch() {
+		return branch;
+	}
 
-    public void setNoOfCopies(Integer noOfCopies) {
-        this.noOfCopies = noOfCopies;
-    }
+	public void setBranch(Branch branch) {
+		this.branch = branch;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Copy copy = (Copy) o;
-        return getBook().equals(copy.getBook()) &&
-                getBranch().equals(copy.getBranch()) &&
-                Objects.equals(getNoOfCopies(), copy.getNoOfCopies());
-    }
+	public Integer getNoOfCopies() {
+		return noOfCopies;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getBook(), getBranch(), getNoOfCopies());
-    }
+	public void setNoOfCopies(Integer noOfCopies) {
+		this.noOfCopies = noOfCopies;
+	}
 
-    @Override
-    public String toString() {
-        return "Copy{" +
-                "book=" + book +
-                ", branch=" + branch +
-                ", noOfCopies=" + noOfCopies +
-                '}';
-    }
+	public CopyId getCopyId() {
+		return copyId;
+	}
+
+	public void setCopyId(CopyId copyId) {
+		this.copyId = copyId;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(book, branch, copyId, noOfCopies);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Copy other = (Copy) obj;
+		return Objects.equals(book, other.book) && Objects.equals(branch, other.branch)
+				&& Objects.equals(copyId, other.copyId) && Objects.equals(noOfCopies, other.noOfCopies);
+	}
+
+	
+
+	
+    
+    
+  
+
+
 }
 
 

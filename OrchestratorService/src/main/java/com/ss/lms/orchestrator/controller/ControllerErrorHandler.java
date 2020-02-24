@@ -14,13 +14,13 @@ import org.springframework.web.client.HttpStatusCodeException;
 public class ControllerErrorHandler<T> {
 	
 	@ExceptionHandler(HttpStatusCodeException.class)
-	public ResponseEntity<T> handleRestException(HttpStatusCodeException e) {
-		return new ResponseEntity<>(e.getStatusCode());
+	public ResponseEntity<String> handleRestException(HttpStatusCodeException e) {
+		return new ResponseEntity<String>(e.getMessage(), e.getStatusCode());
 	}
 	
 	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<T> handleBadRequest(HttpMessageNotReadableException e) {
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	public ResponseEntity<String> handleBadRequest(HttpMessageNotReadableException e) {
+		return new ResponseEntity<String>(e.getMessage() + " - Bad request", HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)

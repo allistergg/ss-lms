@@ -21,9 +21,9 @@ import com.ss.lms.orchestrator.entity.Branch;
 public class LibrarianController {
 	
 	@Autowired
-	RestTemplate restTemplate;
+	private RestTemplate restTemplate;
 	
-	private String BRANCH_URI = "http://localhost:8085/branch";
+	private final String BRANCH_URI = "http://librarian-service/branch";
 	
 	@GetMapping(path="/branches", produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseStatus(HttpStatus.OK)
@@ -38,3 +38,4 @@ public class LibrarianController {
 	}
 
 }
+	

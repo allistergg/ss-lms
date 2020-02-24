@@ -27,9 +27,9 @@ import com.ss.lms.orchestrator.entity.Loan;
 public class BorrowerController {
 	
 	@Autowired
-	RestTemplate restTemplate;
+	private RestTemplate restTemplate;
 	
-	String BORROWER_URI = "http://localhost:8082/loans";
+	private final String BORROWER_URI = "http://borrower-service/loans";
 	
 	@PostMapping(path="/loans", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
 			produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
