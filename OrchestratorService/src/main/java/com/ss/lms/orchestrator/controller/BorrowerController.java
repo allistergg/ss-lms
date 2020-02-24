@@ -29,7 +29,7 @@ public class BorrowerController {
 	@Autowired
 	RestTemplate restTemplate;
 	
-	String BORROWER_URI = "http://localhost:8082/loans";
+	String BORROWER_URI = "http://borrower-service/loans";
 	
 	@PostMapping(path="/loans", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
 			produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

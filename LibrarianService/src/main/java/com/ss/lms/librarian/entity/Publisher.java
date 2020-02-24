@@ -1,12 +1,33 @@
 package com.ss.lms.librarian.entity;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Publisher {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-    private Integer publisherId;
+@Entity
+@Table(name="tbl_publisher")
+public class Publisher implements Serializable{
+
+    
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4501732281154032227L;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="publisherid")
+	private Integer publisherId;
+	@Column(name="publishername")
     private String publisherName;
+	@Column(name="publisheraddress")
     private String publisherAddress;
+	@Column(name="publisherphone")
     private String publisherPhone;
 
     public Integer getPublisherId() {

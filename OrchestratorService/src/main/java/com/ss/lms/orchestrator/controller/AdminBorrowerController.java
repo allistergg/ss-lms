@@ -19,7 +19,7 @@ public class AdminBorrowerController extends AdminController<Borrower> {
 	@Autowired
 	RestTemplate restTemplate;
 	
-	private String ADMIN_BORROWER_URI = "http://localhost:8080/lms/borrowers/";
+	private String ADMIN_BORROWER_URI = "http://admin-service/lms/borrowers/";
 
 	@Override
 	public ResponseEntity<Borrower[]> getAll() {

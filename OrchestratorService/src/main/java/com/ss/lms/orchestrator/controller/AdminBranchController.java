@@ -19,7 +19,7 @@ public class AdminBranchController extends AdminController<Branch>{
 	@Autowired
 	RestTemplate restTemplate;
 	
-	private String ADMIN_BRANCH_URI = "http://localhost:8080/lms/branches/";
+	private String ADMIN_BRANCH_URI = "http://admin-service/lms/branches/";
 
 	@Override
 	public ResponseEntity<Branch[]> getAll() {

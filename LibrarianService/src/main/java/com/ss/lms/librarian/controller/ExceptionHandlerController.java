@@ -17,7 +17,7 @@ public class ExceptionHandlerController<T> {
 	public ResponseEntity<T> handleSQlError(SQLException e) {
 		return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
 	}
-	
+
 	@ExceptionHandler(ClassNotFoundException.class)
 	public ResponseEntity<T> handleClassPathError(ClassNotFoundException e) {
 		return new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE);
