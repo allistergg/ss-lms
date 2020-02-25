@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_genre")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "books"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "books",})
 public class Genre implements Serializable{
 
 	/**
@@ -33,6 +33,7 @@ public class Genre implements Serializable{
 	private Integer genreId;
 	private String genreName;
 	@ManyToMany(mappedBy="genres", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties("genres")
 	private Set<Book> books;
 
 	public Integer getGenreId() {

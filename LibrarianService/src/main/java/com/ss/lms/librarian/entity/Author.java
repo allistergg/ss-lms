@@ -24,7 +24,7 @@ import javax.persistence.JoinColumn;
 
 @Entity
 @Table(name="tbl_author")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "books"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Author implements Serializable {
 
     /**
@@ -38,6 +38,7 @@ public class Author implements Serializable {
 	@Column(name="authorname")
     private String authorName;
     @ManyToMany(mappedBy="authors", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("authors")
     private Set<Book> books;
 
     public Integer getAuthorId() {

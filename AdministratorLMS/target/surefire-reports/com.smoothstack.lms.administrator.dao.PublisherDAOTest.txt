@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.smoothstack.lms.administrator.dao.PublisherDAOTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.164 s - in com.smoothstack.lms.administrator.dao.PublisherDAOTest

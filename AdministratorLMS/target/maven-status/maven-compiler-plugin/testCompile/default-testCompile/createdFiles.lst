@@ -1,6 +1,1 @@
-com/smoothstack/lms/administrator/dao/BookDAOTest.class
-com/smoothstack/lms/administrator/dao/BranchDAOTest.class
-com/smoothstack/lms/administrator/dao/GenreDAOTest.class
-com/smoothstack/lms/administrator/dao/BorrowerDAOTest.class
 com/smoothstack/lms/administrator/AdministratorLmsApplicationTests.class
-com/smoothstack/lms/administrator/dao/PublisherDAOTest.class

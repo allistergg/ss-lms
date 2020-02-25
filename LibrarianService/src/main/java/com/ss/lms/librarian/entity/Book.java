@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name="tbl_book")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "authors", "genres", "copies", "loans"})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "copies", "loans"})
 public class Book implements Serializable{
 
     /**
@@ -40,16 +40,20 @@ public class Book implements Serializable{
 	@JoinColumn(name="pubid", insertable = false, updatable = false)
     private Publisher publisher;
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="tbl_book_authors", joinColumns = @JoinColumn(name="bookid"),
-    inverseJoinColumns = @JoinColumn(name="authorid"))
-    private Set<Author> authors;
+    @JoinTable(name="tbl_book_authors", joinColumns = @JoinColumn(name="bookid", nullable=false, updatable=false),
+    inverseJoinColumns = @JoinColumn(name="authorid", nullable=false, updatable=false))
+	@JsonIgnoreProperties({"books"})
+	private List<Author> authors;
 	@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="tbl_book_genres", joinColumns = @JoinColumn(name="bookid"),
     inverseJoinColumns = @JoinColumn(name="genreId"))
-    private Set<Genre> genres;
+	@JsonIgnoreProperties("books")
+	private List<Genre> genres;
     @OneToMany(mappedBy = "copyId.bookId", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("book")
     private List<Copy> copies;
     @OneToMany(mappedBy = "loanId.bookId", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("book")
     private List<Loan> loans;
     
 
@@ -82,19 +86,19 @@ public class Book implements Serializable{
     
 
 
-    public Set<Author> getAuthors() {
+    public List<Author> getAuthors() {
 		return authors;
 	}
 
-	public void setAuthors(Set<Author> authors) {
+	public void setAuthors(List<Author> authors) {
 		this.authors = authors;
 	}
 
-	public Set<Genre> getGenres() {
+	public List<Genre> getGenres() {
 		return genres;
 	}
 
-	public void setGenres(Set<Genre> genres) {
+	public void setGenres(List<Genre> genres) {
 		this.genres = genres;
 	}
 
