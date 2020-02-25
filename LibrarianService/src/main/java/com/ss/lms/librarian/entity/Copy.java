@@ -25,6 +25,7 @@ public class Copy implements Serializable{
 	private static final long serialVersionUID = -4706183973407504388L;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="bookid", insertable = false, updatable = false)
+	@JsonIgnoreProperties({"copies"})
 	private Book book;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="branchid", insertable = false, updatable = false)

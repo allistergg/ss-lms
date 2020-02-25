@@ -27,11 +27,7 @@ public class LibrarianService {
 		return brrepo.findByBranchId(id);
 	}
 
-
-
-
 	public void updateBranch(Branch branch) {
-
 		brrepo.save(branch);
 	}
 	
