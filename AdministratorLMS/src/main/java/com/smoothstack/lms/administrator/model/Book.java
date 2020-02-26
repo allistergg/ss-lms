@@ -3,9 +3,9 @@ package com.smoothstack.lms.administrator.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_book")
-@JsonIgnoreProperties("hibernateLazyInitializer")
+@JsonIgnoreProperties({"hibernateLazyInitializer","deleted"})
 public class Book implements Serializable {
 	
 	private static final long serialVersionUID = 8433731159129230918L;
@@ -33,12 +33,15 @@ public class Book implements Serializable {
 	@Column(name = "title")
 	private String title;
 	
+	@Column(name = "deleted")
+	private Boolean deleted;
+	
 	@ManyToOne
-    @JoinColumn(name="pubid", nullable=false)
+    @JoinColumn(name="pubid")
 	@JsonIgnoreProperties("books")
 	private Publisher publisher;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany
 	@JoinTable(name = "tbl_book_authors", joinColumns = {
 			@JoinColumn(name = "bookid", nullable = false, updatable = false) },
 			inverseJoinColumns = { @JoinColumn(name = "authorid",
@@ -46,7 +49,7 @@ public class Book implements Serializable {
 	@JsonIgnoreProperties("books")
 	private List<Author> authors;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany
 	@JoinTable(name = "tbl_book_genres", joinColumns = {
 			@JoinColumn(name = "bookid", nullable = false, updatable = false) },
 			inverseJoinColumns = { @JoinColumn(name = "genre_id",
@@ -54,9 +57,13 @@ public class Book implements Serializable {
 	@JsonIgnoreProperties("books")
 	private List<Genre> genres;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "copiesIdentity.bookId")
+	@OneToMany(mappedBy = "copiesIdentity.bookId", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties("book")
 	private List<Copies> copies;
+	
+	@OneToMany(mappedBy = "loansIdentity.bookId", cascade = CascadeType.REMOVE)
+	@JsonIgnoreProperties("book")
+	private List<Loan> loans;
 	
 	public Integer getBookId() {
 		return bookId;
@@ -94,6 +101,12 @@ public class Book implements Serializable {
 	public void setCopies(List<Copies> copies) {
 		this.copies = copies;
 	}
+	public List<Loan> getLoans() {
+		return loans;
+	}
+	public void setLoans(List<Loan> loans) {
+		this.loans = loans;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -102,6 +115,7 @@ public class Book implements Serializable {
 		result = prime * result + ((bookId == null) ? 0 : bookId.hashCode());
 		result = prime * result + ((copies == null) ? 0 : copies.hashCode());
 		result = prime * result + ((genres == null) ? 0 : genres.hashCode());
+		result = prime * result + ((loans == null) ? 0 : loans.hashCode());
 		result = prime * result + ((publisher == null) ? 0 : publisher.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		return result;
@@ -134,6 +148,11 @@ public class Book implements Serializable {
 			if (other.genres != null)
 				return false;
 		} else if (!genres.equals(other.genres))
+			return false;
+		if (loans == null) {
+			if (other.loans != null)
+				return false;
+		} else if (!loans.equals(other.loans))
 			return false;
 		if (publisher == null) {
 			if (other.publisher != null)

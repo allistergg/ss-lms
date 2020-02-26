@@ -19,11 +19,6 @@ public class CopiesIdentity implements Serializable {
 	public CopiesIdentity() {
 		
 	}
-	
-	public CopiesIdentity(Integer bookId, Integer branchId, Integer noOfCopies) {
-		this.bookId = bookId;
-		this.branchId = branchId;
-	}
 
 	public Integer getBookId() {
 		return bookId;

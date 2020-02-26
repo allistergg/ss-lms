@@ -27,12 +27,12 @@ public class Copies implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="bookid", insertable = false, updatable = false)
-	@JsonIgnoreProperties("loans")
+	@JsonIgnoreProperties({"copies","loans"})
 	private Book book;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="branchid", insertable = false, updatable = false)
-	@JsonIgnoreProperties("copies")
+	@JsonIgnoreProperties({"copies","loans"})
 	private Branch branch;
 
 	public void setCopiesIdentity(CopiesIdentity copiesIdentity) {

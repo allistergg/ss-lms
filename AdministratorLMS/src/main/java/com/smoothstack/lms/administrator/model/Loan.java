@@ -39,7 +39,7 @@ public class Loan implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="branchid", insertable = false, updatable = false)
-	@JsonIgnoreProperties("loans")
+	@JsonIgnoreProperties({"loans","copies"})
 	private Branch branch;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

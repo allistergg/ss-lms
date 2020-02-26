@@ -3,6 +3,7 @@ package com.smoothstack.lms.administrator.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,7 +36,7 @@ public class Borrower implements Serializable {
 	@Column(name = "phone")
 	private String borrowerPhone;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "loansIdentity.cardNo")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "loansIdentity.cardNo", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties("borrower")
 	private List<Loan> loans;
 

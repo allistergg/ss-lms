@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,8 +34,8 @@ public class Publisher implements Serializable {
 	@Column(name = "publisherphone")
 	private String publisherPhone;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "publisher")
-	@JsonIgnoreProperties({"publisher","authors","genres","copies"})
+	@OneToMany(mappedBy = "publisher")
+	@JsonIgnoreProperties({"publisher"})
 	private List<Book> books;
 	
 	public Integer getPublisherId() {
