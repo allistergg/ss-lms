@@ -16,8 +16,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.smoothstack.lms.administrator.model.Branch;
 import com.ss.lms.librarian.dao.BranchRepo;
-import com.ss.lms.librarian.entity.Branch;
+
 
 class LibrarianServiceTest {
 
