@@ -22,12 +22,6 @@ public class LoansIdentity implements Serializable {
 	public LoansIdentity() {
 		
 	}
-	
-	public LoansIdentity(Integer bookId, Integer branchId, Integer cardNo) {
-		this.bookId = bookId;
-		this.branchId = branchId;
-		this.cardNo = cardNo;
-	}
 
 	public Integer getBookId() {
 		return bookId;

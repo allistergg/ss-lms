@@ -30,7 +30,7 @@ public class Author implements Serializable {
 	private String authorName;
 	
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "authors")
-	@JsonIgnoreProperties("authors")
+	@JsonIgnoreProperties({"authors", "loans", "copies"})
 	private List<Book> books;
 	
 	public Integer getAuthorId() {

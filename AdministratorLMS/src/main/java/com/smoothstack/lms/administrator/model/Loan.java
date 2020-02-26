@@ -11,10 +11,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Where;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_book_loans")
+@Where(clause = "deleted = false")
 @JsonIgnoreProperties("hibernateLazyInitializer")
 public class Loan implements Serializable {
 	
@@ -22,6 +25,9 @@ public class Loan implements Serializable {
 	
 	@EmbeddedId
 	private LoansIdentity loansIdentity;
+	
+	@Column(name = "deleted")
+	private Boolean deleted;
 	
 	@Column(name = "dateout")
 	private LocalDate dateOut;
@@ -39,7 +45,7 @@ public class Loan implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="branchid", insertable = false, updatable = false)
-	@JsonIgnoreProperties("loans")
+	@JsonIgnoreProperties({"loans","copies"})
 	private Branch branch;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -86,6 +92,9 @@ public class Loan implements Serializable {
 	public void setBook(Book book) {
 		this.book = book;
 	}
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -96,6 +105,7 @@ public class Loan implements Serializable {
 		result = prime * result + ((dateDue == null) ? 0 : dateDue.hashCode());
 		result = prime * result + ((dateIn == null) ? 0 : dateIn.hashCode());
 		result = prime * result + ((dateOut == null) ? 0 : dateOut.hashCode());
+		result = prime * result + ((deleted == null) ? 0 : deleted.hashCode());
 		result = prime * result + ((loansIdentity == null) ? 0 : loansIdentity.hashCode());
 		return result;
 	}
@@ -137,6 +147,11 @@ public class Loan implements Serializable {
 			if (other.dateOut != null)
 				return false;
 		} else if (!dateOut.equals(other.dateOut))
+			return false;
+		if (deleted == null) {
+			if (other.deleted != null)
+				return false;
+		} else if (!deleted.equals(other.deleted))
 			return false;
 		if (loansIdentity == null) {
 			if (other.loansIdentity != null)
