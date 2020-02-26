@@ -1,7 +1,6 @@
 package com.smoothstack.borrower.controller;
 
 import javax.persistence.NoResultException;
-import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,13 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smoothstack.borrower.domain.CheckOutDetails;
-import com.smoothstack.borrower.domain.Loans;
 import com.smoothstack.borrower.exceptions.InvalidBookCountException;
 import com.smoothstack.borrower.exceptions.InvalidBookIdException;
 import com.smoothstack.borrower.exceptions.InvalidBranchIdException;
@@ -27,18 +25,18 @@ import com.smoothstack.borrower.util.HeaderUtils;
 
 @RequestMapping("/loans")
 public class BorrowerController {
-
-	@Autowired
-	private BorrowerServices borrowerService = new BorrowerServices();
 	private static final Logger log = LoggerFactory.getLogger(BorrowerController.class);
+	@Autowired
+	private BorrowerServices borrowerService;
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<CheckOutDetails> checkOutDetails(@Valid @RequestBody Loans loans) {
+	@RequestMapping(value = "/new/{bookId}/{branchId}/{cardNo}", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<CheckOutDetails> checkOutDetails(@PathVariable("bookId") Integer bookId,
+			@PathVariable("branchId") Integer branchId, @PathVariable("cardNo") Integer cardNo) {
 
 		try {
 
-			CheckOutDetails details = borrowerService.checkOutBook(loans);
+			CheckOutDetails details = borrowerService.checkOutBook(bookId, branchId, cardNo);
 			return new ResponseEntity<>(details, null, HttpStatus.CREATED);
 
 		} catch (NoResultException e) {
@@ -68,23 +66,25 @@ public class BorrowerController {
 					.body(null);
 
 		}
+
 	}
 
-	@RequestMapping(value = "/return", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<String> checkInBook(@Valid @RequestBody Loans loans) {
+	@RequestMapping(value = "/return/{bookId}/{branchId}/{cardNo}", method = RequestMethod.POST, produces = {
+			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<String> checkInBook(@PathVariable("bookId") Integer bookId,
+			@PathVariable("branchId") Integer branchId, @PathVariable("cardNo") Integer cardNo) {
 
 		String resp = "";
 
 		try {
-			boolean status = borrowerService.checkInBook(loans);
+			boolean status = borrowerService.checkInBook(bookId, branchId, cardNo);
 			if (status) {
 				resp = "Book has been checked in successfully.";
 
 				return new ResponseEntity<String>(resp, null, HttpStatus.ACCEPTED);
 			} else {
 				resp = "Failed to check in, please try again.";
-				return new ResponseEntity<String>(resp, null, HttpStatus.NOT_MODIFIED);
+				return new ResponseEntity<String>(resp, null, HttpStatus.NOT_ACCEPTABLE);
 
 			}
 

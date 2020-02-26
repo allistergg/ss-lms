@@ -1,5 +1,8 @@
 package com.smoothstack.borrower.services;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Optional;
 
 import javax.persistence.NoResultException;
@@ -50,29 +53,22 @@ public class BorrowerServices implements IBorrowerServices {
 
 	@Override
 	@Transactional
-	public CheckOutDetails checkOutBook(Loans loans) throws InvalidCardNumberException, InvalidBranchIdException,
-			InvalidBookIdException, InvalidBookCountException {
+	public CheckOutDetails checkOutBook(Integer bookId, Integer branchId, Integer cardNo)
+			throws InvalidCardNumberException, InvalidBranchIdException, InvalidBookIdException,
+			InvalidBookCountException {
 		CheckOutDetails details = null;
-		Integer bookId = -1;
-		Integer branchId = -1;
-		Integer cardNo = -1;
 		try {
-			if (loans != null) {
-				bookId = loans.getBook().getBookId();
-				Optional<Book> b = bookRepository.findById(bookId);
-				if (!b.isPresent()) {
-					throw new InvalidBookIdException();
-				}
-				branchId = loans.getBranch().getBranchId();
-				Optional<Branch> br = branchRepository.findById(branchId);
-				if (!br.isPresent()) {
-					throw new InvalidBranchIdException();
-				}
-				cardNo = loans.getBorrower().getCardNo();
-				Optional<Borrower> bor = borrowerRepository.findById(cardNo);
-				if (!bor.isPresent()) {
-					throw new InvalidCardNumberException();
-				}
+			Optional<Book> b = bookRepository.findById(bookId);
+			if (!b.isPresent()) {
+				throw new InvalidBookIdException();
+			}
+			Optional<Branch> br = branchRepository.findById(branchId);
+			if (!br.isPresent()) {
+				throw new InvalidBranchIdException();
+			}
+			Optional<Borrower> bor = borrowerRepository.findById(cardNo);
+			if (!bor.isPresent()) {
+				throw new InvalidCardNumberException();
 			}
 
 			BookCopyID bci = new BookCopyID(bookId, branchId);
@@ -86,10 +82,17 @@ public class BorrowerServices implements IBorrowerServices {
 					throw new InvalidBookCountException();
 				}
 			}
+
+			Timestamp dateOut = new java.sql.Timestamp(new Date().getTime());
+
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DATE, +7);
+			Timestamp dueDate = new java.sql.Timestamp(cal.getTime().getTime());
 			Loans temploans = new Loans();
+
 			temploans.setBorrowerid(new BorrowerID(bookId, branchId, cardNo));
-			temploans.setDateDue(loans.getDateDue());
-			temploans.setDateOut(loans.getDateOut());
+			temploans.setDateDue(dueDate);
+			temploans.setDateOut(dateOut);
 			Loans newloans = loanRepository.save(temploans);
 			if (newloans != null) {
 				bookCount = bc.get().getNoOfCopies();
@@ -97,9 +100,9 @@ public class BorrowerServices implements IBorrowerServices {
 				log.info("bookCount is = " + bookCount);
 				bc.get().setNoOfCopies(bookCount);
 				bookCopyRepository.save(bc.get());
-				Optional<Book> b = bookRepository.findById(bookId);
-				if (b.isPresent()) {
-					String bookTitle = b.get().getTitle();
+				Optional<Book> bk = bookRepository.findById(bookId);
+				if (bk.isPresent()) {
+					String bookTitle = bk.get().getTitle();
 					details = new CheckOutDetails(bookTitle, temploans.getDateDue().toString());
 				}
 			}
@@ -107,20 +110,20 @@ public class BorrowerServices implements IBorrowerServices {
 		} catch (NoResultException e) {
 
 			log.error("Please try again, as there was a database error. Unable to make changes." + e.getMessage());
-			e.printStackTrace();
+			
 			throw e;
 
 		} catch (InvalidCardNumberException | InvalidBranchIdException | InvalidBookIdException e1) {
 
 			log.error("Please try again, as there was invalid data. Unable to make changes, as a result."
 					+ e1.getMessage());
-			e1.printStackTrace();
+		
 			throw e1;
 
 		} catch (InvalidBookCountException e2) {
 			log.error("Please try again, as there were not enough books at that branch to fulfill your request."
 					+ e2.getMessage());
-			e2.printStackTrace();
+			
 			throw e2;
 		}
 
@@ -130,35 +133,30 @@ public class BorrowerServices implements IBorrowerServices {
 
 	@Override
 	@Transactional
-	public boolean checkInBook(Loans loans)
+	public boolean checkInBook(Integer bookId, Integer branchId, Integer cardNo)
 			throws InvalidCardNumberException, InvalidBookIdException, InvalidBranchIdException {
 		boolean status = false;
-		Integer bookId = -1;
-		Integer branchId = -1;
-		Integer cardNo = -1;
 		try {
-			if (loans != null) {
-				bookId = loans.getBook().getBookId();
-				Optional<Book> b = bookRepository.findById(bookId);
-				if (!b.isPresent()) {
-					throw new InvalidBookIdException();
-				}
 
-				branchId = loans.getBranch().getBranchId();
-				Optional<Branch> br = branchRepository.findById(branchId);
-				if (!br.isPresent()) {
-					throw new InvalidBranchIdException();
-				}
-				cardNo = loans.getBorrower().getCardNo();
-				Optional<Borrower> bor = borrowerRepository.findById(cardNo);
-				if (!bor.isPresent()) {
-					throw new InvalidCardNumberException();
-				}
+			Optional<Book> b = bookRepository.findById(bookId);
+			if (!b.isPresent()) {
+				throw new InvalidBookIdException();
 			}
+
+			Optional<Branch> br = branchRepository.findById(branchId);
+			if (!br.isPresent()) {
+				throw new InvalidBranchIdException();
+			}
+			Optional<Borrower> bor = borrowerRepository.findById(cardNo);
+			if (!bor.isPresent()) {
+				throw new InvalidCardNumberException();
+			}
+
 			BorrowerID bid = new BorrowerID(bookId, branchId, cardNo);
 			Optional<Loans> temploans = loanRepository.findById(bid);
 			if (temploans.isPresent()) {
-				temploans.get().setDateIn(loans.getDateIn());
+				Timestamp dateIn = new java.sql.Timestamp(new Date().getTime());
+				temploans.get().setDateIn(dateIn);
 
 				Loans newloans = loanRepository.save(temploans.get());
 				if (newloans != null) {

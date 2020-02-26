@@ -30,7 +30,7 @@ public class Book implements Serializable {
 	@Column(name = "bookId")
 	private Integer bookId;
 
-	@Column(nullable = false, length = 20, name = "title")
+	@Column(nullable = false, length = 45, name = "title")
 	private String title;
 
 	@ManyToOne
