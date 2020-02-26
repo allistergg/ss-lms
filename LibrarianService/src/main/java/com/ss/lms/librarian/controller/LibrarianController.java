@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import com.ss.lms.librarian.entity.Branch;
+import com.smoothstack.lms.administrator.model.Branch;
 import com.ss.lms.librarian.service.LibrarianService;
 
 @RestController

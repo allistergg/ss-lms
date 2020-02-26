@@ -4,11 +4,14 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.smoothstack.lms.administrator.model.Branch;
 import com.ss.lms.librarian.dao.BranchRepo;
-import com.ss.lms.librarian.entity.Branch;
+
 
 @Service
 public class LibrarianService {
@@ -27,6 +30,7 @@ public class LibrarianService {
 		return brrepo.findByBranchId(id);
 	}
 
+	@Transactional
 	public void updateBranch(Branch branch) {
 		brrepo.save(branch);
 	}
