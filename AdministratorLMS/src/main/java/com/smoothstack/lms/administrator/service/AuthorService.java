@@ -1,18 +1,26 @@
 package com.smoothstack.lms.administrator.service;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.smoothstack.lms.administrator.dao.AuthorDAO;
+import com.smoothstack.lms.administrator.dao.BookDAO;
 import com.smoothstack.lms.administrator.model.Author;
+import com.smoothstack.lms.administrator.model.Book;
 
 @Service
 public class AuthorService {
 	
 	@Autowired
 	private AuthorDAO adao;
+	
+	@Autowired
+	private BookDAO bdao;
 	
 	// CREATE AUTHOR
 	public Author saveAuthor(Author author) {
@@ -22,8 +30,9 @@ public class AuthorService {
 	// READ AUTHOR BY ID
 	public Result<Author> getAuthorById(Integer authorId) {
 		Result<Author> rs = new Result<Author>();
-		if (adao.existsById(authorId)) {
-			rs.setResult(adao.findById(authorId).get());
+		Optional<Author> author = adao.findById(authorId);
+		if (author.isPresent()) {
+			rs.setResult(author.get());
 			rs.setIsSuccess(true);
 		} else {
 			rs.setIsSuccess(false);
@@ -50,9 +59,18 @@ public class AuthorService {
 	}
 	
 	// DELETE AUTHOR
+	@Transactional
 	public Result<Void> deleteAuthor(Integer authorId) {
 		Result<Void> rs = new Result<Void>();
-		if (adao.existsById(authorId)) {
+		Optional<Author> author = adao.findById(authorId);
+		if (author.isPresent()) {
+			for (Book b: author.get().getBooks()) {
+				// this is the only author of the book so book must be deleted
+				if (b.getAuthors().size() == 1) {
+					bdao.deleteById(b.getBookId());
+				}
+			}
+			// finally delete the author
 			adao.deleteById(authorId);
 			rs.setIsSuccess(true);
 		} else {

@@ -3,7 +3,6 @@ package com.smoothstack.lms.administrator.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,13 +13,19 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@SQLDelete(sql = "UPDATE tbl_book SET deleted = b'1' WHERE bookId = ?")
+@Where(clause = "deleted = false")
 @Table(name = "tbl_book")
-@JsonIgnoreProperties({"hibernateLazyInitializer","deleted"})
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Book implements Serializable {
 	
 	private static final long serialVersionUID = 8433731159129230918L;
@@ -57,11 +62,11 @@ public class Book implements Serializable {
 	@JsonIgnoreProperties("books")
 	private List<Genre> genres;
 	
-	@OneToMany(mappedBy = "copiesIdentity.bookId", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "copiesIdentity.bookId")
 	@JsonIgnoreProperties("book")
 	private List<Copies> copies;
 	
-	@OneToMany(mappedBy = "loansIdentity.bookId", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "loansIdentity.bookId")
 	@JsonIgnoreProperties("book")
 	private List<Loan> loans;
 	
@@ -106,6 +111,9 @@ public class Book implements Serializable {
 	}
 	public void setLoans(List<Loan> loans) {
 		this.loans = loans;
+	}
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 	@Override
 	public int hashCode() {
@@ -165,6 +173,11 @@ public class Book implements Serializable {
 		} else if (!title.equals(other.title))
 			return false;
 		return true;
+	}
+	
+	@PreRemove
+	public void deleteBook() {
+		this.deleted = true;
 	}
 	
 }
