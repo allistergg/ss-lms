@@ -31,22 +31,19 @@ public class BorrowerController {
 	
 	private final String BORROWER_URI = "http://borrower-service/loans";
 	
-	@PostMapping(path="/loans", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+	@PostMapping(path="/loans/new", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
 			produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 
 	public ResponseEntity<CheckoutDetails> checkoutBook(@Valid @RequestBody Loan l) {
 		
-		String builtUri = BORROWER_URI + "/new" + "/" + l.getBranch().getBranchId() + 
-				"/" +l.getBook().getBookId() + 
-				"/" + l.getBorrower().getCardNo();
-
-		return restTemplate.postForEntity(builtUri, l,CheckoutDetails.class);
+		 return restTemplate.postForEntity(BORROWER_URI + "/new", l,CheckoutDetails.class);
 	}
 	
-	@PostMapping(path="/loans", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@PostMapping(path="/loans/return", consumes={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+			produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<String> returnBook(@Valid @RequestBody Loan l) {
 	
-		String builtUri = BORROWER_URI + "/" + "return/"+ l.getBook().getBookId() + "/" + l.getBorrower().getCardNo();
-		return restTemplate.postForEntity(builtUri,l,String.class);
+		
+		return restTemplate.postForEntity(BORROWER_URI + "/return",l,String.class);
 	}
 }
