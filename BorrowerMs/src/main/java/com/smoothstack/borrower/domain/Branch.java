@@ -1,20 +1,27 @@
 package com.smoothstack.borrower.domain;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_library_branch")
-
+@JsonIgnoreProperties("hibernateLazyInitializer")
 public class Branch implements Serializable {
 	
+	private static final long serialVersionUID = -2766782311170232024L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "branchId")
@@ -25,6 +32,14 @@ public class Branch implements Serializable {
 	
 	@Column(name = "branchAddress")
 	private String branchAddress;
+	
+	@JsonIgnoreProperties({"branch"})
+	@OneToMany(mappedBy="borrowerid.branchId", fetch = FetchType.LAZY)
+	private List<Loans> loans;
+	
+	@JsonIgnoreProperties({"branch"})
+	@OneToMany(mappedBy="bookcopyid.branchId", fetch = FetchType.LAZY)
+    private List<BookCopies> bookcopies;
 
 	/**
 	 * @return the branchId

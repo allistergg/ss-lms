@@ -15,6 +15,7 @@ import org.junit.Test;
  * @author Pramod Varanasi
  *
  */
+/*
 public class BookTest {
 
   @Test
@@ -39,3 +40,4 @@ public class BookTest {
     assertTrue(b.equals(b1));
   }
 }
+*/

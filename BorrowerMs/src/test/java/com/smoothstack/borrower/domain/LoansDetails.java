@@ -17,7 +17,7 @@ import org.junit.Test;
  */
 public class LoansDetails {
 
-  @Test
+/*  @Test
   public void testLoans() {
 
     Timestamp t = new Timestamp(13123123);
@@ -49,5 +49,5 @@ public class LoansDetails {
 
 
 
-  }
+  } */
 }

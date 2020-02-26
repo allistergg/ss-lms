@@ -1,14 +1,19 @@
 package com.smoothstack.borrower.domain;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tbl_borrower")
@@ -26,7 +31,11 @@ public class Borrower implements Serializable {
   private String address;
 
   @Column(nullable = false, length = 20)
-  private Integer phone;
+  private Long phone;
+  
+  @OneToMany(mappedBy = "borrowerid.cardNo", fetch = FetchType.LAZY)
+  @JsonIgnoreProperties("borrower")
+  private List<Loans> loans;
 
   /**
    * @return the cardNo
@@ -73,14 +82,14 @@ public class Borrower implements Serializable {
   /**
    * @return the phone
    */
-  public Integer getPhone() {
+  public Long getPhone() {
     return phone;
   }
 
   /**
    * @param phone the phone to set
    */
-  public void setPhone(Integer phone) {
+  public void setPhone(Long phone) {
     this.phone = phone;
   }
 
@@ -115,7 +124,7 @@ public class Borrower implements Serializable {
    * @param address
    * @param phone
    */
-  public Borrower(Integer cardNo, String name, String address, Integer phone) {
+  public Borrower(Integer cardNo, String name, String address, Long phone) {
     super();
     this.cardNo = cardNo;
     this.name = name;

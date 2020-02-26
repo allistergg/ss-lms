@@ -5,81 +5,93 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-/**
- * @author vpns3
- *
- */
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "tbl_book_loans")
+@JsonIgnoreProperties("hibernateLazyInitializer")
 public class Loans implements Serializable {
 
-	
-	@Column(name = "bookId")
-	private Integer bookId;
+	private static final long serialVersionUID = 1253980678028553981L;
 
-	
-	@Column(name = "branchId")
-	private Integer branchId;
+	@EmbeddedId
+	BorrowerID borrowerid;
 
-	@Id
-	@Column(name = "cardNo")
-	private Integer cardNo;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "bookId", insertable = false, updatable = false)
+	@JsonIgnoreProperties({ "loans", "publisher", "author", "genre", "bookcopies" })
+	private Book book;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "branchId", insertable = false, updatable = false)
+	@JsonIgnoreProperties("loans")
+	private Branch branch;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cardNo", insertable = false, updatable = false)
+	@JsonIgnoreProperties("loans")
+	private Borrower borrower;
 
 	@Column(name = "dateOut")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Timestamp dateOut;
 
 	@Column(name = "dueDate")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Timestamp dueDate;
 
 	@Column(name = "dateIn")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Timestamp dateIn;
 
 	/**
-	 * @return the bookId
+	 * @return the book
 	 */
-	public Integer getBookId() {
-		return bookId;
+	public Book getBook() {
+		return book;
 	}
 
 	/**
-	 * @param bookId the bookId to set
+	 * @param book the book to set
 	 */
-	public void setBookId(Integer bookId) {
-		this.bookId = bookId;
+	public void setBook(Book book) {
+		this.book = book;
 	}
 
 	/**
-	 * @return the branchId
+	 * @return the branch
 	 */
-	public Integer getBranchId() {
-		return branchId;
+	public Branch getBranch() {
+		return branch;
 	}
 
 	/**
-	 * @param branchId the branchId to set
+	 * @param branch the branch to set
 	 */
-	public void setBranchId(Integer branchId) {
-		this.branchId = branchId;
+	public void setBranch(Branch branch) {
+		this.branch = branch;
 	}
 
 	/**
-	 * @return the cardNo
+	 * @return the borrower
 	 */
-	public Integer getCardNo() {
-		return cardNo;
+	public Borrower getBorrower() {
+		return borrower;
 	}
 
 	/**
-	 * @param cardNo the cardNo to set
+	 * @param borrower the borrower to set
 	 */
-	public void setCardNo(Integer cardNo) {
-		this.cardNo = cardNo;
+	public void setBorrower(Borrower borrower) {
+		this.borrower = borrower;
 	}
 
 	/**
@@ -99,14 +111,14 @@ public class Loans implements Serializable {
 	/**
 	 * @return the dueDate
 	 */
-	public Timestamp getDueDate() {
+	public Timestamp getDateDue() {
 		return dueDate;
 	}
 
 	/**
 	 * @param dueDate the dueDate to set
 	 */
-	public void setDueDate(Timestamp dueDate) {
+	public void setDateDue(Timestamp dueDate) {
 		this.dueDate = dueDate;
 	}
 
@@ -124,9 +136,37 @@ public class Loans implements Serializable {
 		this.dateIn = dateIn;
 	}
 
+	/**
+	 * @return the borrowerid
+	 */
+	public BorrowerID getBorrowerid() {
+		return borrowerid;
+	}
+
+	/**
+	 * @param borrowerid the borrowerid to set
+	 */
+	public void setBorrowerid(BorrowerID borrowerid) {
+		this.borrowerid = borrowerid;
+	}
+
+	/**
+	 * @return the dueDate
+	 */
+	public Timestamp getDueDate() {
+		return dueDate;
+	}
+
+	/**
+	 * @param dueDate the dueDate to set
+	 */
+	public void setDueDate(Timestamp dueDate) {
+		this.dueDate = dueDate;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(bookId, branchId, cardNo, dateIn, dateOut, dueDate);
+		return Objects.hash(book, borrower, branch, dueDate, dateIn, dateOut);
 	}
 
 	@Override
@@ -138,33 +178,30 @@ public class Loans implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Loans other = (Loans) obj;
-		return Objects.equals(bookId, other.bookId) && Objects.equals(branchId, other.branchId)
-				&& Objects.equals(cardNo, other.cardNo) && Objects.equals(dateIn, other.dateIn)
-				&& Objects.equals(dateOut, other.dateOut) && Objects.equals(dueDate, other.dueDate);
+		return Objects.equals(book, other.book) && Objects.equals(borrower, other.borrower)
+				&& Objects.equals(branch, other.branch) && Objects.equals(dueDate, other.dueDate)
+				&& Objects.equals(dateIn, other.dateIn) && Objects.equals(dateOut, other.dateOut);
 	}
 
 	@Override
 	public String toString() {
-		return "Loans [bookId=" + bookId + ", branchId=" + branchId + ", cardNo=" + cardNo + ", dateOut=" + dateOut
+		return "Loans [book=" + book + ", branch=" + branch + ", borrower=" + borrower + ", dateOut=" + dateOut
 				+ ", dueDate=" + dueDate + ", dateIn=" + dateIn + "]";
 	}
 
 	/**
-	 * @param bookId
-	 * 
-	 * @param branchId
-	 * @param cardNo
+	 * @param book
+	 * @param branch
+	 * @param borrower
 	 * @param dateOut
 	 * @param dueDate
 	 * @param dateIn
 	 */
-	public Loans(Integer bookId, Integer branchId, Integer cardNo, Timestamp dateOut, Timestamp dueDate,
-			Timestamp dateIn) {
+	public Loans(Book book, Branch branch, Borrower borrower, Timestamp dateOut, Timestamp dueDate, Timestamp dateIn) {
 		super();
-		this.bookId = bookId;
-
-		this.branchId = branchId;
-		this.cardNo = cardNo;
+		this.book = book;
+		this.branch = branch;
+		this.borrower = borrower;
 		this.dateOut = dateOut;
 		this.dueDate = dueDate;
 		this.dateIn = dateIn;
@@ -177,5 +214,26 @@ public class Loans implements Serializable {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+	/*
+	 * @ManyToOne(fetch = FetchType.LAZY)
+	 * 
+	 * @JoinColumn(name = "cardno", insertable = false, updatable = false)
+	 * 
+	 * @JsonIgnoreProperties("loans") private Borrower borrower;
+	 * 
+	 * @ManyToOne(fetch = FetchType.LAZY)
+	 * 
+	 * @JoinColumn(name = "branchid", insertable = false, updatable = false)
+	 * 
+	 * @JsonIgnoreProperties("loans") private Branch branch;
+	 * 
+	 * @ManyToOne(fetch = FetchType.LAZY)
+	 * 
+	 * @JoinColumn(name = "bookid", insertable = false, updatable = false)
+	 * 
+	 * @JsonIgnoreProperties({ "loans", "publisher", "authors", "genres", "copies"
+	 * }) private Book book;
+	 */
 
 }
