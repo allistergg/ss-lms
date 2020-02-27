@@ -27,4 +27,9 @@ public class ControllerErrorHandler<T> {
 	public ResponseEntity<String> handleInvalidArgument(MethodArgumentNotValidException e) {
 		return new ResponseEntity<>(e.getBindingResult().getFieldErrors().stream().map(err->err.getDefaultMessage()).collect(Collectors.toList()).toString(), HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<String> handleNoService(IllegalStateException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+	}
 }
